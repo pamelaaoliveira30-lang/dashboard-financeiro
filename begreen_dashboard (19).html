@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeGreen · Dashboard 2025 vs 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#1a6b3c;--gl:#27ae60;--gp:#e8f8ef;--r:#e74c3c;--rp:#fdf0ef;--a:#f39c12;--ap:#fef9e7;--b:#2980b9;--bp:#eaf4fb;--bg:#f4f6f8;--surf:#fff;--t1:#1a1a2e;--t2:#4a5568;--t3:#9ca3af;--bd:#e5e7eb;--rad:10px;--sh:0 1px 4px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);font-size:13px}
+.layout{display:flex;min-height:100vh}
+.sb{width:210px;background:var(--g);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px}.sb-logo h1 span{color:#7dcea0}
+.sb-logo p{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.sb-nav{padding:10px 8px;flex:1;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.3);text-transform:uppercase;padding:0 8px;margin:12px 0 4px}
+.nb{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:none;background:none;cursor:pointer;font-size:12px;color:rgba(255,255,255,.62);width:100%;text-align:left;font-family:'Inter',sans-serif;transition:all .15s;margin-bottom:1px}
+.nb:hover{background:rgba(255,255,255,.1);color:#fff}.nb.on{background:rgba(255,255,255,.18);color:#fff;font-weight:500}
+.nb svg{width:14px;height:14px;flex-shrink:0;opacity:.85}
+.sb-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.22)}
+.main{margin-left:210px;flex:1}
+.topbar{background:var(--surf);border-bottom:1px solid var(--bd);padding:11px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:10px}
+.tb-l h2{font-size:14px;font-weight:600}.tb-l p{font-size:11px;color:var(--t3);margin-top:1px}
+.tb-r{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bdg{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:500}
+.bdg-g{background:var(--gp);color:var(--g)}.bdg-b{background:var(--bp);color:var(--b)}.bdg-r{background:var(--rp);color:var(--r)}.bdg-a{background:var(--ap);color:#856404}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--surf);color:var(--t2);font-family:'Inter',sans-serif;transition:all .15s}
+.btn:hover{background:var(--bg)}.btn-d{border-color:#fca5a5;color:var(--r)}.btn-d:hover{background:var(--rp)}
+.content{padding:18px 26px;max-width:1120px}
+.panel{display:none}.panel.active{display:block}
+
+/* UPLOAD */
+.dropz{border:2px dashed var(--bd);border-radius:var(--rad);padding:34px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surf);margin-bottom:12px}
+.dropz:hover,.dropz.drag{border-color:var(--gl);background:var(--gp)}
+.drop-ico{width:46px;height:46px;background:var(--gp);border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.drop-ico svg{width:21px;height:21px;color:var(--g)}
+.drop-t{font-size:14px;font-weight:600;margin-bottom:4px}.drop-s{font-size:12px;color:var(--t3);line-height:1.6}
+.prog-w{height:4px;background:var(--bg);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
+.prog-f{height:100%;background:var(--gl);transition:width .3s}
+#stmsg{font-size:12px;color:var(--t2);margin-top:6px;text-align:center;min-height:16px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:500}
+.chip-26{background:var(--bp);color:var(--b)}.chip-day{background:var(--ap);color:#856404}
+.chip button{border:none;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0;opacity:.5}
+.chip button:hover{opacity:1;color:var(--r)}
+.info-strip{background:var(--bp);border-radius:8px;padding:11px 14px;font-size:12px;color:#1a5276;line-height:1.65;margin-top:14px}
+
+/* STATUS ROW */
+.status-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.status-card{border-radius:var(--rad);padding:14px 16px;border:1px solid var(--bd)}
+.status-card.y25{border-left:3px solid var(--g);background:#fafffe}
+.status-card.y26{border-left:3px solid var(--b);background:#f0f7ff}
+.sc-year{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.y25 .sc-year{color:var(--g)}.y26 .sc-year{color:var(--b)}
+.sc-val{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.sc-sub{font-size:11px;color:var(--t3);margin-top:3px}
+.sc-delta{font-size:11px;margin-top:5px}
+
+/* KPIS */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surf);border-radius:var(--rad);padding:13px 15px;border:1px solid var(--bd);box-shadow:var(--sh)}
+.kpi-l{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:5px}
+.kpi-v{font-size:22px;font-weight:700;letter-spacing:-.3px;line-height:1}
+.kpi-d{font-size:10px;margin-top:5px;display:inline-flex;align-items:center;padding:1px 7px;border-radius:99px;font-weight:500}
+.kd-up{background:var(--gp);color:var(--g)}.kd-dn{background:var(--rp);color:var(--r)}.kd-n{background:var(--bg);color:var(--t3)}
+
+/* CARDS */
+.card{background:var(--surf);border-radius:var(--rad);padding:15px 17px;border:1px solid var(--bd);box-shadow:var(--sh);margin-bottom:13px}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
+.card-title{font-size:13px;font-weight:600}
+.card-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:13px}
+.ch-w{position:relative;width:100%}
+
+/* BARS */
+.blist{display:flex;flex-direction:column}
+.brow{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:.5px solid #f3f4f6}
+.brow:last-child{border-bottom:none}
+.brk{font-size:10px;font-weight:600;color:var(--t3);width:14px;text-align:center;flex-shrink:0}
+.bn{font-size:11px;color:var(--t1);width:148px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.bt{flex:1;height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;transition:width .5s}
+.bv{font-size:11px;font-weight:600;min-width:50px;text-align:right;color:var(--t2)}
+.bs{font-size:10px;min-width:42px;text-align:right}
+
+/* TREND */
+.tr{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;padding:1px 6px;border-radius:99px}
+.tr-up{background:var(--gp);color:var(--g)}.tr-dn{background:var(--rp);color:var(--r)}.tr-n{background:var(--bg);color:var(--t3)}
+
+/* ALERTS */
+.alert{border-radius:8px;padding:11px 13px;margin-bottom:8px;border-left:3px solid;display:flex;gap:11px;align-items:flex-start}
+.alert.red{background:var(--rp);border-color:var(--r)}.alert.amber{background:var(--ap);border-color:var(--a)}
+.alert.green{background:var(--gp);border-color:var(--g)}.alert.blue{background:var(--bp);border-color:var(--b)}
+.aic{font-size:15px;flex-shrink:0;margin-top:1px}
+.abd h4{font-size:12px;font-weight:600;margin-bottom:2px}
+.alert.red h4{color:var(--r)}.alert.amber h4{color:#856404}.alert.green h4{color:var(--g)}.alert.blue h4{color:var(--b)}
+.abd p{font-size:11px;line-height:1.5;color:var(--t2)}
+.cbox{font-size:11px;margin-top:5px;padding:5px 8px;background:rgba(255,255,255,.65);border-radius:5px;color:var(--t2);line-height:1.5}
+.cbox b{color:var(--t1);font-weight:600}
+
+/* TABLE */
+.tbl-w{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:6px 9px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:7px 9px;border-bottom:.5px solid #f9fafb;color:var(--t1)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.tdr{text-align:right}
+.pill{display:inline-flex;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:600}
+.p-g{background:var(--gp);color:var(--g)}.p-r{background:var(--rp);color:var(--r)}.p-a{background:var(--ap);color:#856404}.p-b{background:var(--bp);color:var(--b)}.p-n{background:var(--bg);color:var(--t3)}
+
+/* INSIGHT BOXES */
+.ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
+.ins{border-radius:8px;padding:12px 13px;border-left:3px solid}
+.ins.red{background:var(--rp);border-color:var(--r)}.ins.green{background:var(--gp);border-color:var(--g)}.ins.amber{background:var(--ap);border-color:var(--a)}.ins.blue{background:var(--bp);border-color:var(--b)}
+.ins-t{font-size:11px;font-weight:600;margin-bottom:3px}
+.ins.red .ins-t{color:var(--r)}.ins.green .ins-t{color:var(--g)}.ins.amber .ins-t{color:#856404}.ins.blue .ins-t{color:var(--b)}
+.ins-b{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* LEGEND */
+.leg{display:flex;flex-wrap:wrap;gap:11px;margin-bottom:9px}
+.leg span{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t3)}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* EMPTY */
+.empty{text-align:center;padding:44px;color:var(--t3)}
+.empty svg{width:38px;height:38px;margin:0 auto 11px;display:block;opacity:.2}
+
+@media(max-width:900px){
+  .sb{width:54px}.sb-logo,.sb-sec,.nb span,.sb-foot{display:none}.nb{justify-content:center;padding:9px}
+  .main{margin-left:54px}.content{padding:11px}.kpi-row,.ins-grid,.three{grid-template-columns:repeat(2,1fr);gap:8px}
+  .two,.status-row{grid-template-columns:1fr}.topbar{padding:9px 13px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sb">
+  <div class="sb-logo"><h1>Be<span>Green</span></h1><p>Dashboard 2025 · 2026</p></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Dados</div>
+    <button class="nb on" onclick="go('upload',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span>Importar diário</span></button>
+    <div class="sb-sec">Visão anual</div>
+    <button class="nb" onclick="go('comp',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span>2025 vs 2026</span></button>
+    <div class="sb-sec">2026 ao vivo</div>
+    <button class="nb" onclick="go('posicao',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Posição atual</span></button>
+    <button class="nb" onclick="go('comercial',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Visão comercial</span></button>
+    <button class="nb" onclick="go('clientes',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Clientes</span></button>
+    <button class="nb" onclick="go('produtos',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg><span>Produtos</span></button>
+    <div class="sb-sec">Inteligência</div>
+    <button class="nb" onclick="go('radar',this)"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Alertas & causas</span></button>
+    <div class="sb-sec">Sistema</div>
+    <button class="nb" onclick="go('export',this)" style="color:#7dcea0"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg><span>Exportar dados</span></button>
+    <button class="nb" onclick="clearImports()" style="color:#f87171"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg><span>Limpar imports</span></button>
+  </nav>
+  <div class="sb-foot">BeGreen v6.0 · 2025–2026</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="tb-l"><h2 id="pg-title">Importar relatório diário</h2><p id="pg-sub">Arraste o .xls do Bling para atualizar os dados</p></div>
+    <div class="tb-r">
+      <span class="bdg bdg-g">2025: R$1.099k (ano completo)</span>
+      <span id="bdg26" class="bdg bdg-b">2026: R$372k (Jan–15/Mai) ⚠ cancelamento deduzido</span>
+      <span id="bdg-yoy" class="bdg bdg-r">YoY: −24,2%</span>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- UPLOAD -->
+    <div id="p-upload" class="panel active">
+      <div class="dropz" id="dropz" onclick="document.getElementById('fin').click()">
+        <div class="drop-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div>
+        <div class="drop-t">Arraste o relatório .xls / .xlsx do Bling aqui</div>
+        <div class="drop-s">Exporte no Bling: <b>01/01/2026 até hoje</b> → Exportar → arraste aqui<br>O dashboard atualiza todos os painéis automaticamente em segundos</div>
+      </div>
+      <input type="file" id="fin" accept=".xls,.xlsx" style="display:none" onchange="onFile(this.files[0])">
+      <div id="stmsg"></div>
+      <div class="prog-w" id="prog"><div class="prog-f" id="pf" style="width:0%"></div></div>
+
+      <div style="margin-top:16px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:10px">Histórico de uploads</div>
+        <div style="margin-bottom:6px;display:flex;align-items:center;gap:8px">
+          <span class="bdg bdg-g" style="font-size:11px">● 2025 — histórico permanente gravado</span>
+          <span style="font-size:11px;color:var(--t3)">Jan–Dez · R$1.099k · 12 meses</span>
+        </div>
+        <div style="margin-bottom:6px;display:flex;align-items:center;gap:8px">
+          <span class="bdg bdg-b" style="font-size:11px">● 2026 base — gravada em 15/05/2026</span>
+          <span style="font-size:11px;color:var(--t3)">Jan–15/Mai · R$403k · 74 clientes</span>
+        </div>
+        <div style="margin-bottom:8px;font-size:11px;color:var(--t3)">Atualizações diárias:</div>
+        <div class="chips" id="chips"><span style="font-size:11px;color:var(--t3)">Nenhuma atualização importada ainda hoje.</span></div>
+      </div>
+
+      <div class="info-strip">
+        <b>Fluxo diário (30 segundos):</b><br>
+        1. No Bling: Relatórios → Vendas → por Produto → período <b>01/01/2026 até hoje</b> → Exportar .xls<br>
+        2. Arraste o arquivo aqui → todos os painéis atualizam automaticamente<br>
+        3. O sistema compara com 2025 e mostra variações, tendências e alertas<br>
+        4. O histórico de 2025 e a base de 2026 estão permanentemente gravados
+      </div>
+    </div>
+
+    <!-- 2025 vs 2026 -->
+    <div id="p-comp" class="panel">
+      <div class="status-row">
+        <div class="status-card y25">
+          <div class="sc-year">2025 — ano completo</div>
+          <div class="sc-val">R$ 1.099k</div>
+          <div class="sc-sub">12 meses · 37.714 kg · preço médio R$38,6/kg</div>
+          <div class="sc-delta"><span class="bdg bdg-g" style="font-size:10px">Melhor mês: Fev/26? Não — Mar/25: R$101k</span></div>
+        </div>
+        <div class="status-card y26" id="sc-2026">
+          <div class="sc-year">2026 — Jan até 15/Mai</div>
+          <div class="sc-val" id="sc26-val">R$ 403k</div>
+          <div class="sc-sub" id="sc26-sub">135 dias · 10.357 kg · R$35,96/kg</div>
+          <div class="sc-delta"><span id="sc26-yoy" class="bdg bdg-r" style="font-size:10px">−24,2% vs mesmo período 2025</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Receita mensal — 2025 completo vs 2026 ao vivo</div><div class="card-sub">Barras verdes = 2025 · Barras azuis = 2026 (acumulado por mês estimado)</div></div></div>
+        <div class="leg"><span><span class="ld" style="background:#1a6b3c"></span>2025</span><span><span class="ld" style="background:#2980b9"></span>2026</span></div>
+        <div class="ch-w" style="height:240px"><canvas id="c-comp" role="img" aria-label="Comparativo 2025 vs 2026">Receita mensal comparativa.</canvas></div>
+      </div>
+      <div class="two">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Preço médio/kg — 2025 vs 2026</div></div>
+          <div class="leg"><span><span class="ld" style="background:#1a6b3c"></span>2025</span><span><span class="ld" style="background:#2980b9"></span>2026</span></div>
+          <div class="ch-w" style="height:180px"><canvas id="c-preco" role="img" aria-label="Preço comparativo">Preço médio comparativo.</canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Clientes ativos — 2025 vs 2026</div></div>
+          <div class="leg"><span><span class="ld" style="background:#1a6b3c"></span>2025</span><span><span class="ld" style="background:#2980b9"></span>2026</span></div>
+          <div class="ch-w" style="height:180px"><canvas id="c-cli" role="img" aria-label="Clientes comparativo">Clientes comparativo.</canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Lições de 2025 — o que os dados revelaram</div><div class="card-sub">Pontos críticos para não repetir em 2026</div></div></div>
+        <div class="ins-grid">
+          <div class="ins red"><div class="ins-t">Base de clientes caiu 26%</div><div class="ins-b">De 77 (Jan) para 57 (Dez). Churn silencioso ao longo do ano sem reposição proporcional.</div></div>
+          <div class="ins red"><div class="ins-t">MAG Restaurante: −70% em 12 meses</div><div class="ins-b">De R$11.554 (Jan/25) para R$3.507 (Dez/25). O maior cliente histórico em declínio livre.</div></div>
+          <div class="ins amber"><div class="ins-t">Spread de preço: R$9,87/kg</div><div class="ins-b">Frisé Roxa: R$29,40 (mín) a R$39,27 (máx). Mesmo produto, preços radicalmente diferentes.</div></div>
+          <div class="ins amber"><div class="ins-t">2º semestre sistematicamente fraco</div><div class="ins-b">Jun–Dez/25 abaixo da média anual. Dez/25 foi o pior mês: R$77k.</div></div>
+          <div class="ins green"><div class="ins-t">Broto: produto mais lucrativo</div><div class="ins-b">R$242k com apenas 376 kg real (~R$385/kg real). Expansão ativa pode mudar o mix de margem.</div></div>
+          <div class="ins blue"><div class="ins-t">Preço médio subiu +10,8%</div><div class="ins-b">R$37,6 → R$42,1/kg em 12 meses. Se custo não acompanhou, margem melhorou significativamente.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSIÇÃO ATUAL 2026 -->
+    <div id="p-posicao" class="panel">
+      <div class="kpi-row" id="kpis"></div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Posição 2026 vs mesmo período 2025 — tabela completa</div></div></div>
+        <div class="tbl-w"><table id="t-vs"><thead><tr>
+          <th>Métrica</th><th class="tdr">Jan–Mai 2025</th><th class="tdr">Jan–<span id="th-ate">15/Mai</span> 2026</th><th class="tdr">Variação</th><th>Status</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Projeção de encerramento do ano</div><div class="card-sub" id="proj-sub">Baseado na taxa diária atual</div></div></div>
+        <div class="tbl-w"><table id="t-proj"><thead><tr>
+          <th>Cenário</th><th class="tdr">Projeção 2026</th><th class="tdr">2025 real</th><th class="tdr">YoY esperado</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+
+    <!-- VISÃO COMERCIAL -->
+    <div id="p-comercial" class="panel">
+
+      <!-- UPLOAD EXCLUSIVO MAIO -->
+      <div style="border:1.5px dashed var(--b);border-radius:var(--rad);padding:14px 16px;background:#f0f7ff;margin-bottom:13px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--b)">📥 Arquivo de maio — 01/05/2026 até hoje</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">No Bling: Relatórios → Vendas → por Produto → período <b>01/05/2026 até hoje</b> → Exportar .xls</div>
+          </div>
+          <div style="display:flex;gap:7px;align-items:center">
+            <span id="maio-chip" class="bdg bdg-n" style="font-size:11px;background:var(--bg);color:var(--t3)">Nenhum arquivo de maio importado</span>
+            <button class="btn btn-d" style="font-size:11px;padding:4px 10px" onclick="clearMaio()">Limpar</button>
+          </div>
+        </div>
+        <div id="drop-maio" onclick="document.getElementById('fin-maio').click()"
+          ondragover="event.preventDefault();document.getElementById('drop-maio').style.background='var(--gp)'"
+          ondragleave="document.getElementById('drop-maio').style.background='#fff'"
+          ondrop="onDropMaio(event)"
+          style="border:1.5px dashed var(--bd);border-radius:8px;padding:12px;text-align:center;cursor:pointer;background:#fff;transition:background .2s;font-size:12px;color:var(--t3)">
+          <svg style="width:16px;height:16px;display:inline-block;margin-right:5px;vertical-align:-3px;color:var(--b)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Arraste o .xls de <b>maio</b> aqui ou clique para selecionar
+        </div>
+        <input type="file" id="fin-maio" accept=".xls,.xlsx" style="display:none" onchange="onFileMaio(this.files[0])">
+        <div id="maio-stmsg" style="font-size:12px;color:var(--t2);margin-top:6px;min-height:16px;text-align:center"></div>
+        <div style="height:4px;background:var(--bg);border-radius:2px;margin-top:4px;overflow:hidden" id="maio-prog-w"><div id="maio-prog-f" style="height:100%;background:var(--gl);width:0%;transition:width .3s"></div></div>
+      </div>
+
+      <!-- KPIs MAIO -->
+      <div class="card">
+        <div class="card-hd">
+          <div><div class="card-title">⚡ Maio 2026 — números do mês</div><div class="card-sub" id="com-atualizado">Importe o relatório de 01/05 até hoje para ver os dados</div></div>
+        </div>
+        <div class="kpi-row" id="com-kpis" style="margin-bottom:0"></div>
+      </div>
+
+      <!-- FATURAMENTO DIÁRIO DO MÊS -->
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Faturamento diário — maio 2026</div><div class="card-sub" id="com-dia-sub">Azul claro = média estimada · Azul escuro = faturado real · Cinza = projeção · Linha vermelha = média/dia</div></div></div>
+        <div class="ch-w" style="height:185px"><canvas id="c-com-mes" role="img" aria-label="Faturamento diário maio">Faturamento por dia.</canvas></div>
+      </div>
+
+      <!-- RITMO + PROJEÇÃO FECHAMENTO -->
+      <div class="two">
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Ritmo diário — maio</div><div class="card-sub">Média real por dia do período</div></div></div>
+          <div class="kpi-row" style="grid-template-columns:1fr 1fr;margin-bottom:0" id="com-diario"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Projeção — fechamento maio</div><div class="card-sub" id="com-mes-label">Maio 2026</div></div></div>
+          <div class="kpi-row" style="grid-template-columns:1fr 1fr;margin-bottom:0" id="com-proj-mes"></div>
+        </div>
+      </div>
+
+      <!-- MICROGREENS & BASILICO — MAIO -->
+      <div class="card">
+        <div class="card-hd"><div>
+          <div class="card-title">🌿 Microgreens & Basilico — maio 2026</div>
+          <div class="card-sub">Unidades, kg e receita do mês · 01/05 até a data importada</div>
+        </div></div>
+        <div class="kpi-row" id="com-micro-kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px"></div>
+        <div class="tbl-w"><table id="t-micro"><thead><tr>
+          <th>Produto</th><th class="tdr">Unidades</th><th class="tdr">Kg equiv.</th><th class="tdr">Receita maio</th><th class="tdr">Preço médio/un</th><th class="tdr">R$/kg real</th>
+        </tr></thead><tbody id="t-micro-body"></tbody></table></div>
+      </div>
+
+    </div>
+
+    <!-- EXPORTAR -->
+    <div id="p-export" class="panel">
+      <div class="card">
+        <div class="card-hd"><div>
+          <div class="card-title">Exportar dados para compartilhar com o time</div>
+          <div class="card-sub">Gera planilhas .xlsx prontas para abrir no Excel ou Google Sheets</div>
+        </div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0">
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">📊 Resumo executivo</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">KPIs, faturamento por mês, comparativo 2025 vs 2026 e projeções</div>
+            <button class="btn" style="width:100%;justify-content:center;background:var(--g);color:#fff;border-color:var(--g)" onclick="exportResumo()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar resumo.xlsx
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">👥 Ranking de clientes</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Lista completa de clientes 2026 com receita, YoY vs 2025 e status de tendência</div>
+            <button class="btn" style="width:100%;justify-content:center;background:var(--b);color:#fff;border-color:var(--b)" onclick="exportClientes()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar clientes.xlsx
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">📦 Ranking de produtos</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Produtos 2026 com receita, volume kg, ticket real por kg e YoY vs 2025</div>
+            <button class="btn" style="width:100%;justify-content:center;background:#8e44ad;color:#fff;border-color:#8e44ad" onclick="exportProdutos()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar produtos.xlsx
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">🌿 Microgreens & Basilico</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Unidades, kg equivalente e receita de brotos e basilico — mês de maio</div>
+            <button class="btn" style="width:100%;justify-content:center;background:#27ae60;color:#fff;border-color:#27ae60" onclick="exportMicro()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar microgreens.xlsx
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">📅 Histórico diário maio</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Faturamento e clientes dia a dia de maio 2026 conforme importado</div>
+            <button class="btn" style="width:100%;justify-content:center;background:#e67e22;color:#fff;border-color:#e67e22" onclick="exportDiario()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar diario.xlsx
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:var(--rad);padding:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">📋 Tudo em uma planilha</div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Arquivo completo com todas as abas: resumo, clientes, produtos, micro e diário</div>
+            <button class="btn" style="width:100%;justify-content:center;background:var(--t1);color:#fff;border-color:var(--t1)" onclick="exportTudo()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Baixar completo.xlsx
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:0">
+        <div class="card-hd"><div class="card-title">Pré-visualização — dados que serão exportados</div></div>
+        <div id="export-preview" style="font-size:12px;color:var(--t3);padding:8px 0">Clique em qualquer botão acima para ver o preview e baixar.</div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="p-clientes" class="panel">
+      <div class="two">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Top clientes 2026 — receita acumulada</div></div>
+          <div class="blist" id="b-cli-val"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">YoY por cliente</div><div class="card-sub">2026 vs mesmo período 2025</div></div></div>
+          <div class="blist" id="b-cli-yoy"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Detalhamento completo — clientes 2026</div></div></div>
+        <div class="tbl-w"><table id="t-cli"><thead><tr>
+          <th>#</th><th>Cliente</th><th class="tdr">2026 acum.</th><th class="tdr">2025 jan–mai</th><th class="tdr">YoY</th><th class="tdr">Prods</th><th>Status</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PRODUTOS -->
+    <div id="p-produtos" class="panel">
+      <div class="two">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Top produtos — receita 2026</div></div>
+          <div class="blist" id="b-prod-val"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Ticket real por kg (R$/kg equivalente)</div><div class="card-sub">Broto e especiarias revelam o verdadeiro valor</div></div></div>
+          <div class="blist" id="b-prod-tick"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div><div class="card-title">Tabela completa de produtos 2026</div></div></div>
+        <div class="tbl-w"><table id="t-prod"><thead><tr>
+          <th>#</th><th>Produto</th><th class="tdr">Receita</th><th class="tdr">% total</th><th class="tdr">Volume kg</th><th class="tdr">Preço médio</th><th class="tdr">R$/kg real</th><th class="tdr">2025 jan–mai</th><th class="tdr">YoY</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- RADAR -->
+    <div id="p-radar" class="panel">
+      <div id="radar-list"></div>
+      <div class="card" style="margin-top:11px">
+        <div class="card-hd"><div><div class="card-title">Clientes mono-produto — oportunidade de cross-sell</div><div class="card-sub">Compram só 1 produto · potencial imediato de ampliar ticket</div></div></div>
+        <div class="tbl-w"><table id="t-mono"><thead><tr><th>#</th><th>Cliente</th><th>Produto único</th><th class="tdr">Receita 2026</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DADOS PERMANENTES — 2025 COMPLETO + 2026 BASE 15/05
+// ══════════════════════════════════════════════════════
+const D25 = {
+  receita:  [99766,97727,101431,99259,92843,83734,86659,89962,96888,90874,83011,76996],
+  kg:       [2653,2560,2664,2659,2401,2146,2255,2235,2463,2305,2079,1910],
+  preco:    [37.60,38.17,38.08,37.33,38.67,39.02,38.43,40.24,39.33,39.43,39.93,40.31],
+  clientes: [77,69,73,72,65,64,70,71,72,70,59,59],
+  total:    1099270,
+  janMai:   { receita:491026, kg:12937, preco:37.95, clientes:95 },
+  topCliJanMai: {
+    'JACINTA ALIMENTOS E BEBIDAS LTDA':14899,
+    'SODEXO DO BRASIL COMERCIAL S.A.':30910,
+    'MAG RESTAURANTE LTDA':53626,
+    'ORGANICO DO CHICO COMERCIO DE ALIMENTOS NATURAIS S.A.':11852,
+    'CASA AMORA RESTAURANTE E BUFFET LTDA':19197,
+    'MARRMA RESTAURANTE LTDA':7954,
+    'A. B. CAFETERIA LTDA':15019,
+    'I.B.V. CAFETERIA LTDA':16028,
+    'ANNA CAPRI RISTORANTE':16345,
+    'RC DE OLIVEIRA RESTAURANTE LTDA':9344,
+    'VIEIRA MIRANDA ALIMENTOS LTDA':14033,
+    'CAFE DO MUSEU RESTAURANTE LTDA':12874,
+    'JL CAFETERIA EIRELI':6234,
+    'AH! BON CAFETERIA EIRELI':10803,
+    'PREPARE ALIMENTOS E BEBIDAS LTDA':4821,
+  },
+  topProdJanMai: {
+    'ALFACE CROCANTE':112054,'BANDEJA BROTO 100G':63211,
+    'ALFACE FRISE VERDE':77456,'ALFACE FRISE ROXA':52340,
+    'FOLHA DE BETERRABA':18923,'ALFACE LISA ROXA':12876,
+    'ALFACE LISA VERDE':11934,'AGRIAO':9102,'RUCULA':13201,
+    'ALFACE MIMOSA ROXA':13421,'BANDEJA BROTO 50G':4821,
+  }
+};
+
+// 2026 BASE — gravada em 15/05/2026 com dados reais do Bling
+const BASE_26 = {
+  date:'15/05/2026', label:'Jan–15/Mai/2026', dias:135,
+  total_val:372410.36, total_kg:10356.5, n_cli:74, preco_medio:35.96,
+  clients:{
+    'JACINTA ALIMENTOS E BEBIDAS LTDA':2793.02,
+    'SODEXO DO BRASIL COMERCIAL S.A.':25688.61,
+    'MAG RESTAURANTE LTDA':24152.49,
+    'ORGANICO DO CHICO COMERCIO DE ALIMENTOS NATURAIS S.A.':21987.81,
+    'CASA AMORA RESTAURANTE E BUFFET LTDA':16522.6,
+    'MARRMA RESTAURANTE LTDA':15222.2,
+    'A. B. CAFETERIA LTDA':14933.0,
+    'I.B.V. CAFETERIA LTDA':14252.2,
+    'ANNA CAPRI RISTORANTE':14061.92,
+    'RC DE OLIVEIRA RESTAURANTE LTDA':12045.67,
+    'VIEIRA MIRANDA ALIMENTOS LTDA':11843.26,
+    'CAFE DO MUSEU RESTAURANTE LTDA':10828.59,
+    'JL CAFETERIA EIRELI':10656.9,
+    'AH! BON CAFETERIA EIRELI':9447.4,
+    'PREPARE ALIMENTOS E BEBIDAS LTDA':8979.5,
+    'MBJ ALIMENTOS E BEBIDAS LTDA':8505.52,
+    'SANTA RITA ALIMENTOS E BEBIDAS LTDA':8375.4,
+    'GLOUTON RESTAURANTE LTDA':7708.99,
+    'CABERNET COMERCIO DE ALIMENTOS E BEBIDAS LTDA':7661.07,
+    'CRISTO RESTAURANTE EIRELI':7200.23,
+  },
+  products:{
+    'ALFACE CROCANTE':{val:125404.72,kg:4104.92,avg_preco:30.71},
+    'BANDEJA BROTO 100G':{val:57393.08,kg:78.7,avg_preco:36.7},
+    'ALFACE FRISE VERDE':{val:55196.22,kg:1761.58,avg_preco:30.79},
+    'ALFACE FRISE ROXA':{val:47680.23,kg:1333.45,avg_preco:35.51},
+    'FOLHA DE BETERRABA':{val:19093.74,kg:542.62,avg_preco:35.78},
+    'ALFACE LISA ROXA':{val:15645.97,kg:441.75,avg_preco:35.84},
+    'ALFACE LISA VERDE':{val:14375.36,kg:457.91,avg_preco:31.38},
+    'AGRIAO':{val:13073.1,kg:359.44,avg_preco:35.38},
+    'RUCULA':{val:11252.9,kg:316.17,avg_preco:35.73},
+    'ALFACE MIMOSA ROXA':{val:11080.73,kg:315.23,avg_preco:35.46},
+    'BANDEJA BROTO 50G':{val:9546.0,kg:23.9,avg_preco:20.59},
+    'ALFACE MIMOSA VERDE':{val:7160.68,kg:231.95,avg_preco:31.0},
+    'MANJERICAO BASILICO':{val:6345.91,kg:52.09,avg_preco:7.48},
+    'MANJERICAO BASILICO - KG':{val:4643.47,kg:66.43,avg_preco:69.9},
+    'BUQUE HORTALIÇAS ESPECIAIS':{val:3489.53,kg:189.2,avg_preco:59.28},
+  },
+  mono:{
+    'ANNA CAPRI RISTORANTE':{val:14061.92,prod:'ALFACE CROCANTE'},
+    'Juicy Burguer Bh Ltda':{val:1668.0,prod:'ALFACE CROCANTE'},
+    'CJ BURGUER COMERCIO DE ALIMENTOS LTDA':{val:354.0,prod:'ALFACE CROCANTE'},
+    'RUTE SANTOS FREITAS MAIA':{val:368.1,prod:'BUQUE HORTALIÇAS ESPECIAIS'},
+    'KAREN CAROLINE DE BARROS VAZ':{val:679.46,prod:'BUQUE HORTALIÇAS ESPECIAIS'},
+  }
+};
+
+
+// ══════════════════════════════════════════════════════
+// BASE MAIO 2026 — 01/05 a 18/05 (real, atualizado 18/05)
+// ══════════════════════════════════════════════════════
+const BASE_MAIO_26 = {"label": "01–19/Mai/2026", "dia_mes": 19, "date": "19/05/2026", "total_val": 44905.34, "total_kg": 1023.97, "n_cli": 59, "preco_medio": 41.72, "products": {"ALFACE CROCANTE": {"val": 9919.7, "kg": 308.92, "avg_preco": 31.98}, "ALFACE FRISE ROXA": {"val": 5014.05, "kg": 134.56, "avg_preco": 37.03}, "ALFACE FRISE VERDE": {"val": 7655.24, "kg": 237.17, "avg_preco": 32.17}, "BANDEJA BROTO 100G": {"val": 7102.58, "kg": 9.35, "avg_preco": 38.43}, "FOLHA DE BETERRABA": {"val": 2230.97, "kg": 61.11, "avg_preco": 36.37}, "AGRIAO": {"val": 779.87, "kg": 20.72, "avg_preco": 37.63}, "ALFACE LISA ROXA": {"val": 2299.8, "kg": 63.07, "avg_preco": 36.78}, "ALFACE LISA VERDE": {"val": 2114.85, "kg": 66.32, "avg_preco": 31.99}, "ALFACE MIMOSA ROXA": {"val": 1107.8, "kg": 29.6, "avg_preco": 37.29}, "ALFACE MIMOSA VERDE": {"val": 1662.14, "kg": 50.19, "avg_preco": 32.13}, "RUCULA": {"val": 1364.62, "kg": 37.66, "avg_preco": 36.44}, "BANDEJA BROTO 50G": {"val": 966.0, "kg": 2.3, "avg_preco": 21.0}, "BUQUE HORTALIÇAS ESPECIAIS": {"val": 503.89, "kg": 3.0, "avg_preco": 35.29}}, "clients": {"MAG RESTAURANTE LTDA": 4605.8, "CASA AMORA RESTAURANTE E BUFFET LTDA": 2296.8, "MARRMA RESTAURANTE LTDA": 2570.4, "SODEXO DO BRASIL COMERCIAL S.A.": 2126.87, "A. B. CAFETERIA LTDA": 1896.4, "VIEIRA MIRANDA ALIMENTOS LTDA": 1799.5, "I.B.V. CAFETERIA LTDA": 1759.1, "JL CAFETERIA EIRELI": 1435.6, "BCF BEBIDAS E COMESTIVEIS FINOS LTDA": 1015.57, "AH! BON CAFETERIA EIRELI": 1372.6, "CAFE DO MUSEU RESTAURANTE LTDA": 1317.06, "GLOUTON RESTAURANTE LTDA": 895.88, "NECTAR DA SERRA LTDA": 998.38, "CABERNET COMERCIO DE ALIMENTOS E BEBIDAS LTDA": 878.45, "RC DE OLIVEIRA RESTAURANTE LTDA": 980.14, "ANNA CAPRI RISTORANTE": 874.06, "PREPARE ALIMENTOS E BEBIDAS LTDA": 911.3, "SP BOA ESPERANCA 2007 BAR E RESTAURANTE LTDA": 875.95, "MBJ ALIMENTOS E BEBIDAS LTDA": 848.06, "GR SERVICOS E ALIMENTACAO LTDA.": 846.35, "ORGANICO DO CHICO COMERCIO DE ALIMENTOS NATURAIS S.A.": 520.0, "SILVÂNIA COSTA PEREIRA": 146.79, "CRISTO RESTAURANTE EIRELI": 692.05, "ARBORE EMPREENDIMENTOS GASTRONOMICOS LTDA": 709.4, "SP RIO DE JANEIRO 2010 BAR E RESTAURANTE LTDA": 661.1, "JM HAMBURGUERS LTDA": 646.26, "BAR E RESTAURANTE ROCHA XIMENES LTDA": 655.21, "SP BELO HORIZONTE 2002 BAR E RESTAURANTE EIRELI": 603.91, "VINERIA REX LTDA": 471.25, "SP LAGOA 2024 BAR E RESTAURANTE LTDA": 573.85, "TRINTAEUM S.A,": 516.0, "TREVO SALGADOS CONGELADOS INDUSTRIA E COMERCIO LTDA": 473.3, "SANTA RITA ALIMENTOS E BEBIDAS LTDA": 492.0, "LUC2 COMERCIO ALIMENTOS LTDA": 501.6, "REI DO BAILAO BAR E RESTAURANTE LTDA": 463.15, "SAVORE ALIMENTAR LTDA": 435.25, "ODOYA BH LTDA": 437.51, "DARTA EIRELI": 405.3, "FONTE GRANDE ALIMENTOS LTDA": 330.2, "PRAÇA SETE CASA DE MASSAS LTDA": 309.6, "ML FOODS & CATERING LTDA": 285.29, "HAMBURGUERIA COMERCIO DE LANCHES LTDA": 239.25, "DFL EMPREENDIMENTOS LTDA": 229.71, "ER COZINHA ARTESANAL": 211.87, "QUEIJO E CULTURA LTDA": 195.69, "JACINTA ALIMENTOS E BEBIDAS LTDA": 172.62, "Creni Comércio de Alimentação": 146.3, "ELIANE A MELO LOPES": 157.4, "GUERRA ALIMENTACAO LTDA": 113.55, "PASTAIO BH LTDA": 113.27, "EST TRATTORIA LTDA": 96.32, "A COZINHA DE SOFIA": 73.14, "AYU ALIMENTACAO DO BEM EIRELI": 63.8, "MARIA SELMA FERREIRA LOPES": 81.8, "RUTE SANTOS FREITAS MAIA": 40.9, "JULIANA DE OLIVEIRA PENA": 40.9, "NAIARA ANDRADE BAUMFELD": 40.9, "ILKA LOPES": 40.9, "RENATA PIERI": 29.9}, "mono": {"CASA AMORA RESTAURANTE E BUFFET LTDA": {"val": 2296.8, "prod": "ALFACE CROCANTE"}, "MARRMA RESTAURANTE LTDA": {"val": 2570.4, "prod": "BANDEJA BROTO 100G"}, "ANNA CAPRI RISTORANTE": {"val": 874.06, "prod": "ALFACE CROCANTE"}}};
+
+// DIÁRIOS — histórico de dias reais de maio
+// Cada entrada: {date, label, total_val, total_kg, n_cli, products}
+const BASE_DAILY_26 = [
+  {date:'18/05/2026', label:'18/Mai', total_val:3375.49, total_kg:68.22, n_cli:19,
+    clients:{"MAG RESTAURANTE LTDA": 525.7, "SANTA RITA ALIMENTOS E BEBIDAS LTDA": 418.2, "BCF BEBIDAS E COMESTIVEIS FINOS LTDA": 251.51, "PREPARE ALIMENTOS E BEBIDAS LTDA": 270.2, "I.B.V. CAFETERIA LTDA": 244.2, "ANNA CAPRI RISTORANTE": 191.4, "NECTAR DA SERRA LTDA": 172.0, "JL CAFETERIA EIRELI": 182.2, "MARRMA RESTAURANTE LTDA": 189.0, "A. B. CAFETERIA LTDA": 137.6, "ML FOODS & CATERING LTDA": 142.83, "SODEXO DO BRASIL COMERCIAL S.A.": 74.26, "VIEIRA MIRANDA ALIMENTOS LTDA": 114.15, "GLOUTON RESTAURANTE LTDA": 114.74, "MBJ ALIMENTOS E BEBIDAS LTDA": 114.58, "SP BOA ESPERANCA 2007 BAR E RESTAURANTE LTDA": 68.8, "JM HAMBURGUERS LTDA": 68.8, "SP RIO DE JANEIRO 2010 BAR E RESTAURANTE LTDA": 68.8, "CRISTO RESTAURANTE EIRELI": 26.52},
+    products:{"ALFACE CROCANTE": {"val": 539.43, "kg": 16.91, "avg_preco": 31.9}, "BANDEJA BROTO 100G": {"val": 1026.27, "kg": 1.35, "avg_preco": 38.61}, "ALFACE LISA VERDE": {"val": 313.19, "kg": 9.76, "avg_preco": 32.69}, "ALFACE MIMOSA VERDE": {"val": 483.38, "kg": 15.11, "avg_preco": 32.29}, "ALFACE LISA ROXA": {"val": 443.89, "kg": 12.01, "avg_preco": 37.36}, "BANDEJA BROTO 50G": {"val": 126.0, "kg": 0.3, "avg_preco": 21.0}, "ALFACE FRISE ROXA": {"val": 80.44, "kg": 2.18, "avg_preco": 36.9}, "ALFACE FRISE VERDE": {"val": 180.23, "kg": 5.65, "avg_preco": 31.9}, "ALFACE MIMOSA ROXA": {"val": 152.03, "kg": 4.12, "avg_preco": 36.9}, "RUCULA": {"val": 30.63, "kg": 0.83, "avg_preco": 36.9}}
+  },
+  {date:'19/05/2026', label:'19/Mai', total_val:2183.83, total_kg:56.62, n_cli:17,
+    clients:{"TRINTAEUM S.A,":258.0,"LUC2 COMERCIO ALIMENTOS LTDA":250.8,"MAG RESTAURANTE LTDA":228.3,"ANNA CAPRI RISTORANTE":216.92,"CABERNET COMERCIO DE ALIMENTOS E BEBIDAS LTDA":201.1,"AH! BON CAFETERIA EIRELI":144.4,"ARBORE EMPREENDIMENTOS GASTRONOMICOS LTDA":126.87,"VINERIA REX LTDA":114.33,"RC DE OLIVEIRA RESTAURANTE LTDA":102.2,"SAVORE ALIMENTAR LTDA":99.61,"ODOYA BH LTDA":98.51,"HAMBURGUERIA COMERCIO DE LANCHES LTDA":95.7,"SP RIO DE JANEIRO 2010 BAR E RESTAURANTE LTDA":87.25,"CASA AMORA RESTAURANTE E BUFFET LTDA":63.8,"EST TRATTORIA LTDA":41.28,"A COZINHA DE SOFIA":28.24,"CRISTO RESTAURANTE EIRELI":26.52},
+    products:{"ALFACE CROCANTE":{"val":601.14,"kg":19.07,"avg_preco":31.5},"FOLHA DE BETERRABA":{"val":317.62,"kg":8.77,"avg_preco":36.47},"BANDEJA BROTO 100G":{"val":302.4,"kg":0.4,"avg_preco":37.8},"ALFACE FRISE VERDE":{"val":283.91,"kg":8.9,"avg_preco":31.9},"ALFACE LISA ROXA":{"val":226.41,"kg":6.38,"avg_preco":36.52},"ALFACE LISA VERDE":{"val":136.85,"kg":4.29,"avg_preco":31.9},"ALFACE FRISE ROXA":{"val":92.25,"kg":2.5,"avg_preco":36.9},"RUCULA":{"val":69.01,"kg":1.87,"avg_preco":36.9},"ALFACE MIMOSA ROXA":{"val":66.79,"kg":1.81,"avg_preco":36.9},"ALFACE MIMOSA VERDE":{"val":61.25,"kg":1.92,"avg_preco":31.9},"AGRIAO":{"val":26.2,"kg":0.71,"avg_preco":36.9}}
+  }
+];
+
+
+// ══════════════════════════════════════════════════════
+// CANCELAMENTOS CONHECIDOS — deduzidos da base
+// ══════════════════════════════════════════════════════
+const CANCELAMENTOS = [
+  {
+    cliente: 'JACINTA ALIMENTOS E BEBIDAS LTDA',
+    periodo: 'Fev/26',
+    valor: 30877.33,
+    motivo: 'Nota fiscal cancelada — confirmado em 18/05/2026',
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+const SK='bg-daily-v1';
+const UF={'BANDEJA BROTO':0.05,'BROTO':0.05,'BUQUE':0.10,'MANJERICAO BASILICO':0.06,'COENTRO':0.05,'SALSA':0.05};
+function kgF(p){const u=p.toUpperCase();if(u.includes('- UN'))return null;if(u.includes('- KG'))return 1;for(const[k,v]of Object.entries(UF))if(u.includes(k))return v;return 1;}
+function parseBR(v){if(v===null||v===undefined||v==='')return 0;if(typeof v==='number')return v;return parseFloat(String(v).trim().replace(/\./g,'').replace(',','.'))||0;}
+function fR(v){return'R$'+(v>=1000?Math.round(v/1000)+'k':Math.round(v));}
+function fN(v){return Math.round(v).toLocaleString('pt-BR');}
+function fPct(v,d=1){return(v>=0?'+':'')+v.toFixed(d)+'%';}
+function trH(p){if(p===null||isNaN(p))return'<span class="tr tr-n">—</span>';if(p>=5)return`<span class="tr tr-up">↑${fPct(p)}</span>`;if(p<=-5)return`<span class="tr tr-dn">↓${fPct(p)}</span>`;return`<span class="tr tr-n">→${fPct(p)}</span>`;}
+
+// ══════════════════════════════════════════════════════
+// PARSER
+// ══════════════════════════════════════════════════════
+function parseSheet(data){
+  const rows=[];let cli=null;
+  for(const row of data){
+    if(!row||row.length<2)continue;
+    const r0=row[0],r1=row[1];
+    const f=(r0===null||r0===undefined)?'':String(r0).trim();
+    const p=(r1===null||r1===undefined)?'':String(r1).trim();
+    if(f==='Cliente'||f==='Totais'||f==='Total')continue;
+    if(f&&f!=='\xa0'&&f!=='\u00a0'&&f!==' '&&f.length>4&&(r1===null||r1===undefined||p==='')){
+      cli=f.replace(/\s*-\s*[\d.]{11,18}.*$/,'').trim();continue;
+    }
+    if((f===''||f==='\xa0'||f==='\u00a0'||f===' ')&&p&&p.length>1&&p!=='Produto'&&cli){
+      const q=parseBR(row[3]),pr=parseBR(row[5]),va=parseBR(row[6]),f2=kgF(p);
+      if(f2===null||(!q&&!va))continue;
+      rows.push({client:cli,product:p,qtde:q,kg:q*f2,preco:pr,valor:va});
+    }
+  }
+  return rows;
+}
+
+function parseXlsx(buf){
+  const wb=XLSX.read(buf,{type:'array',raw:true});
+  const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+  return parseSheet(data);
+}
+
+// ══════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════
+function load(){try{return JSON.parse(localStorage.getItem(SK)||'null');}catch{return null;}}
+function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch{alert('Armazenamento cheio.');}}
+
+// ══════════════════════════════════════════════════════
+// FILE HANDLING
+// ══════════════════════════════════════════════════════
+const dz=document.getElementById('dropz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');onFile(e.dataTransfer.files[0]);});
+
+async function onFile(file){
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!['xls','xlsx'].includes(ext)){setst('Selecione um .xls ou .xlsx do Bling.');return;}
+  setst('Lendo arquivo...',true,20);
+  let rows;
+  try{rows=parseXlsx(await file.arrayBuffer());}
+  catch(e){setst('Erro: '+e.message);return;}
+  if(!rows||!rows.length){setst('Nenhum dado encontrado. Verifique o formato do arquivo.');return;}
+  setst('Calculando...',true,65);
+  const snap={
+    file:file.name, date:new Date().toLocaleDateString('pt-BR'),
+    total_val:rows.reduce((s,r)=>s+r.valor,0),
+    total_kg:rows.reduce((s,r)=>s+r.kg,0),
+    n_cli:new Set(rows.map(r=>r.client)).size,
+  };
+  snap.preco_medio=snap.total_kg>0?snap.total_val/snap.total_kg:0;
+  const byCli={},byProd={},monoCheck={};
+  for(const r of rows){
+    if(!byCli[r.client])byCli[r.client]={val:0,prods:new Set()};
+    byCli[r.client].val+=r.valor;byCli[r.client].prods.add(r.product);
+    if(!byProd[r.product])byProd[r.product]={val:0,kg:0,prices:[]};
+    byProd[r.product].val+=r.valor;byProd[r.product].kg+=r.kg;
+    if(r.preco>0)byProd[r.product].prices.push(r.preco);
+    if(!monoCheck[r.client])monoCheck[r.client]={val:0,prods:new Set()};
+    monoCheck[r.client].val+=r.valor;monoCheck[r.client].prods.add(r.product);
+  }
+  snap.clients=Object.fromEntries(Object.entries(byCli).map(([n,d])=>[n,Math.round(d.val*100)/100]));
+  snap.prodsPerCli=Object.fromEntries(Object.entries(byCli).map(([n,d])=>[n,d.prods.size]));
+  snap.products=Object.fromEntries(Object.entries(byProd).map(([n,d])=>[n,{val:Math.round(d.val*100)/100,kg:Math.round(d.kg*10)/10,avg_preco:d.prices.length?Math.round(d.prices.reduce((a,b)=>a+b,0)/d.prices.length*100)/100:0}]));
+  snap.mono=Object.fromEntries(Object.entries(monoCheck).filter(([,d])=>d.prods.size===1&&d.val>300).map(([n,d])=>[n,{val:Math.round(d.val*100)/100,prod:[...d.prods][0]}]));
+  save(snap);
+  setst(`✓ Atualizado! ${fR(snap.total_val)} · ${snap.n_cli} clientes · preço médio R$${snap.preco_medio.toFixed(2)}/kg`,true,100);
+  setTimeout(()=>document.getElementById('prog').style.display='none',600);
+  render(snap);
+  updateChips(snap);
+}
+
+function setst(m,sp=false,pct=0){
+  document.getElementById('stmsg').textContent=m;
+  const p=document.getElementById('prog');p.style.display=sp?'block':'none';
+  document.getElementById('pf').style.width=pct+'%';
+}
+function clearImports(){if(!confirm('Limpar importações diárias? A base de 2026 (15/05) e o histórico 2025 permanecem.'))return;localStorage.removeItem(SK);render(null);updateChips(null);setst('Importações limpas. Base de 15/05 permanece.');}
+function updateChips(snap){
+  const el=document.getElementById('chips');
+  el.innerHTML=snap?`<span class="chip chip-day">${snap.file} · ${snap.date} · ${fR(snap.total_val)}</span>`:'<span style="font-size:11px;color:var(--t3)">Nenhuma atualização importada ainda hoje.</span>';
+}
+
+// ══════════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════════
+const CH={};
+function mkChart(id,type,data,opts){
+  if(CH[id])try{CH[id].destroy();}catch{}
+  const el=document.getElementById(id);if(!el)return;
+  CH[id]=new Chart(el,{type,data,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},...opts}});
+}
+const gc='rgba(0,0,0,.04)',tf={family:'Inter',size:10};
+const xo={ticks:{font:tf,maxRotation:45,autoSkip:false},grid:{display:false}};
+
+// ══════════════════════════════════════════════════════
+// BARS
+// ══════════════════════════════════════════════════════
+function bars(id,items,color,fv){
+  const max=Math.max(...items.map(i=>i.v),1);
+  document.getElementById(id).innerHTML=items.map((i,idx)=>`<div class="brow"><span class="brk">${idx+1}</span><span class="bn" title="${i.n}">${i.n}</span><div class="bt"><div class="bf" style="width:${Math.round(i.v/max*100)}%;background:${color}"></div></div><span class="bv">${fv(i.v)}</span>${i.tag?`<span class="bs">${i.tag}</span>`:''}</div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER — uses live snap if available, falls back to BASE_26
+// ══════════════════════════════════════════════════════
+function render(snap){
+  const d=snap||BASE_26;
+  const isLive=!!snap;
+  const label=isLive?`${d.date} (ao vivo)`:'Jan–15/Mai/2026 (base)';
+  const dias=snap?snap.dias||135:135;
+
+  // Topbar badges
+  const yoy=(d.total_val-D25.janMai.receita)/D25.janMai.receita*100;
+  document.getElementById('bdg26').textContent=`2026: ${fR(d.total_val)} (${isLive?d.date:'15/Mai'})`;
+  const bdgYoy=document.getElementById('bdg-yoy');
+  bdgYoy.textContent=`YoY: ${fPct(yoy)}`;
+  bdgYoy.className='bdg '+(yoy>=0?'bdg-g':'bdg-r');
+
+  // Status card 2026
+  document.getElementById('sc26-val').textContent=fR(d.total_val);
+  document.getElementById('sc26-sub').textContent=`${dias} dias · ${fN(d.total_kg)} kg · R$${d.preco_medio.toFixed(2)}/kg`;
+  document.getElementById('sc26-yoy').textContent=`${fPct(yoy)} vs mesmo período 2025`;
+  document.getElementById('sc26-yoy').className='bdg '+(yoy>=0?'bdg-g':'bdg-r')+' font-size:10px';
+
+  // COMP CHARTS
+  const mLabels=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  // Estimate 2026 monthly from ratio (YTD distributed by 2025 pattern for Jan-Apr, May partial)
+  const janAprRatio25=D25.receita.slice(0,4).reduce((a,b)=>a+b,0)/D25.janMai.receita;
+  const est26JanApr=d.total_val*janAprRatio25/1.18; // rough
+  // Simpler: use Jan-Abr 2025 ratios
+  const r25=D25.receita;
+  const tot25JanApr=r25.slice(0,4).reduce((a,b)=>a+b,0);
+  const tot25JanMai=r25.slice(0,5).reduce((a,b)=>a+b,0);
+  // Assume 2026 monthly proportional to 2025
+  const fat26est=Array(12).fill(null);
+  for(let i=0;i<4;i++) fat26est[i]=Math.round(d.total_val*r25[i]/tot25JanMai);
+  fat26est[4]=Math.round(d.total_val-fat26est.slice(0,4).reduce((a,b)=>a+(b||0),0)); // May = remainder
+
+  setTimeout(()=>{
+    mkChart('c-comp','bar',{labels:mLabels,datasets:[
+      {label:'2025',data:r25,backgroundColor:'rgba(26,107,60,.3)',borderColor:'#1a6b3c',borderWidth:1.5,borderRadius:3},
+      {label:'2026',data:fat26est,backgroundColor:'rgba(41,128,185,.72)',borderColor:'#2980b9',borderWidth:1.5,borderRadius:3},
+    ]},{scales:{y:{ticks:{font:tf,callback:v=>fR(v)},grid:{color:gc}},x:xo}});
+    mkChart('c-preco','line',{labels:mLabels,datasets:[
+      {data:D25.preco,borderColor:'#1a6b3c',backgroundColor:'rgba(26,107,60,.07)',fill:true,tension:.35,pointRadius:2},
+      {data:[d.preco_medio,...Array(11).fill(null)],borderColor:'#2980b9',tension:.35,pointRadius:4,spanGaps:true,pointBackgroundColor:'#2980b9'},
+    ]},{scales:{y:{ticks:{font:tf,callback:v=>'R$'+v},grid:{color:gc}},x:xo}});
+    mkChart('c-cli','bar',{labels:mLabels,datasets:[
+      {label:'2025',data:D25.clientes,backgroundColor:'rgba(26,107,60,.25)',borderColor:'#1a6b3c',borderWidth:1.5},
+      {label:'2026',data:[d.n_cli,...Array(11).fill(null)],backgroundColor:'rgba(41,128,185,.7)',borderColor:'#2980b9',borderWidth:1.5},
+    ]},{scales:{y:{ticks:{font:tf},grid:{color:gc}},x:xo}});
+  },60);
+
+  // KPIs
+  const kpyoy=(d.total_val-D25.janMai.receita)/D25.janMai.receita*100;
+  const projAnual=d.total_val/dias*365;
+  const projMes=d.total_val/dias*30;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-l">Receita 2026 (acum.)</div><div class="kpi-v">${fR(d.total_val)}</div><span class="kpi-d ${kpyoy>=0?'kd-up':'kd-dn'}">${kpyoy>=0?'↑':'↓'}${Math.abs(kpyoy).toFixed(1)}% vs 2025</span></div>
+    <div class="kpi"><div class="kpi-l">Volume 2026</div><div class="kpi-v">${fN(d.total_kg)} kg</div><span class="kpi-d kd-n">${d.n_cli} clientes ativos</span></div>
+    <div class="kpi"><div class="kpi-l">Preço médio/kg</div><div class="kpi-v">R$${d.preco_medio.toFixed(2)}</div><span class="kpi-d ${d.preco_medio>D25.janMai.preco?'kd-up':'kd-dn'}">${d.preco_medio>D25.janMai.preco?'↑':'↓'} vs 2025 R$${D25.janMai.preco}</span></div>
+    <div class="kpi"><div class="kpi-l">Projeção anual 2026</div><div class="kpi-v">${fR(projAnual)}</div><span class="kpi-d ${projAnual>D25.total?'kd-up':'kd-dn'}">${projAnual>D25.total?'↑':'↓'} vs 2025 R$${Math.round(D25.total/1000)}k</span></div>`;
+
+  document.getElementById('th-ate').textContent=isLive?d.date:'15/Mai';
+  document.getElementById('proj-sub').textContent=`Taxa atual: ${fR(d.total_val/dias)}/dia · ${dias} dias decorridos`;
+
+  const comps=[
+    {m:'Receita acumulada',v25:D25.janMai.receita,v26:d.total_val,fmt:fR},
+    {m:'Volume (kg)',v25:D25.janMai.kg,v26:d.total_kg,fmt:fN},
+    {m:'Preço médio/kg',v25:D25.janMai.preco,v26:d.preco_medio,fmt:v=>'R$'+v.toFixed(2)},
+    {m:'Clientes ativos',v25:D25.janMai.clientes,v26:d.n_cli,fmt:v=>v.toString()},
+  ];
+  document.querySelector('#t-vs tbody').innerHTML=comps.map(c=>{
+    const p=(c.v26-c.v25)/c.v25*100;
+    return`<tr><td><b>${c.m}</b></td><td class="tdr">${c.fmt(c.v25)}</td><td class="tdr"><b>${c.fmt(c.v26)}</b></td><td class="tdr">${trH(p)}</td><td>${p>=0?'<span class="pill p-g">↑ Acima</span>':'<span class="pill p-r">↓ Abaixo</span>'}</td></tr>`;
+  }).join('');
+
+  document.querySelector('#t-proj tbody').innerHTML=[
+    {sc:'Pace atual (sem mudança)',mult:1},
+    {sc:'Otimista (+10% aceleração)',mult:1.1},
+    {sc:'Pessimista (2º sem. fraco como 2025)',mult:0.88},
+  ].map(s=>{
+    const proj=projAnual*s.mult;
+    const yoyp=(proj-D25.total)/D25.total*100;
+    return`<tr><td>${s.sc}</td><td class="tdr"><b>${fR(proj)}</b></td><td class="tdr" style="color:var(--t3)">${fR(D25.total)}</td><td class="tdr">${trH(yoyp)}</td></tr>`;
+  }).join('');
+
+  // CLIENTS
+  const topCli=Object.entries(d.clients).sort((a,b)=>b[1]-a[1]).slice(0,20);
+  bars('b-cli-val',topCli.slice(0,12).map(([n,v])=>({n,v})),'#2980b9',fR);
+
+  const yoyList=topCli.map(([n,v])=>{
+    const r25=D25.topCliJanMai[n]||0;
+    const p=r25>0?(v-r25)/r25*100:null;
+    return{n:n.split(' ').slice(0,3).join(' '),v,r25,p};
+  }).sort((a,b)=>(b.p||0)-(a.p||0));
+  bars('b-cli-yoy',yoyList.slice(0,12).map(i=>({n:i.n,v:Math.abs(i.v-i.r25),tag:i.p!==null?trH(i.p):'<span class="tr tr-n">novo</span>'})),'#8e44ad',()=>'');
+
+  // Mark cancelled clients
+  const CANCELLED_CLIENTS = new Set(CANCELAMENTOS.map(c=>c.cliente));
+
+  // Build products-per-client count from raw snap (stored in prodsPerCli if available)
+  const prodsPerCli = d.prodsPerCli||{};
+
+  document.querySelector('#t-cli tbody').innerHTML=topCli.map(([n,v],i)=>{
+    const r25v=D25.topCliJanMai[n]||0;const p=r25v>0?(v-r25v)/r25v*100:null;
+    const nProds=prodsPerCli[n]||'—';
+    const hasCancelled = CANCELLED_CLIENTS.has(n);
+    const cancelTag = hasCancelled?' <span class="pill p-a" style="font-size:9px">⚠ cancelamento</span>':'';
+    const statusTag = p!==null?(p>=10?'<span class="pill p-g">↑ Crescendo</span>':p<=-10?'<span class="pill p-r">↓ Caindo</span>':'<span class="pill p-n">→ Estável</span>'):'<span class="pill p-b">Novo</span>';
+    return`<tr${hasCancelled?' style="background:rgba(243,156,18,.06)"':''}>
+      <td style="color:var(--t3);font-size:10px">${i+1}</td>
+      <td>${n}${cancelTag}</td>
+      <td class="tdr"><b>R$${v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></td>
+      <td class="tdr" style="color:var(--t3)">${r25v?'R$'+r25v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</td>
+      <td class="tdr">${p!==null?trH(p):'<span class="tr tr-n">novo</span>'}</td>
+      <td class="tdr" style="color:var(--t3)">${nProds}</td>
+      <td>${statusTag}</td>
+    </tr>`;
+  }).join('');
+
+  // PRODUCTS
+  const topProd=Object.entries(d.products).sort((a,b)=>b[1].val-a[1].val);
+  bars('b-prod-val',topProd.slice(0,12).map(([n,d])=>({n,v:d.val})),'#1a6b3c',fR);
+  const tickProds=topProd.filter(([,p])=>p.kg>0&&p.avg_preco>0).map(([n,p])=>{
+    const f=kgF(n);const realKg=f&&f<1?p.avg_preco/f:p.avg_preco;return{n,v:realKg,val:p.val};
+  }).filter(t=>t.v>0).sort((a,b)=>b.v-a.v).slice(0,10);
+  bars('b-prod-tick',tickProds,'#e74c3c',v=>'R$'+Math.round(v)+'/kg');
+
+  document.querySelector('#t-prod tbody').innerHTML=topProd.slice(0,18).map(([n,p],i)=>{
+    const f=kgF(n);const rkg=f&&f<1?p.avg_preco/f:p.avg_preco;
+    const sh=(p.val/d.total_val*100).toFixed(1);
+    const r25v=(D25.topProdJanMai[n]||0);const py=r25v>0?(p.val-r25v)/r25v*100:null;
+    return`<tr><td style="color:var(--t3);font-size:10px">${i+1}</td><td>${n}</td><td class="tdr"><b>${fR(p.val)}</b></td><td class="tdr"><span class="pill ${i<3?'p-g':'p-n'}">${sh}%</span></td><td class="tdr">${fN(p.kg)} kg</td><td class="tdr">R$${p.avg_preco.toFixed(2)}</td><td class="tdr" style="font-weight:600;color:${rkg>100?'var(--r)':rkg>40?'var(--a)':'var(--t2)'}">R$${Math.round(rkg)}/kg</td><td class="tdr" style="color:var(--t3)">${r25v?fR(r25v):'—'}</td><td class="tdr">${py!==null?trH(py):'<span class="tr tr-n">novo</span>'}</td></tr>`;
+  }).join('');
+
+  // RADAR
+  const alerts=[];
+
+  // Alerta de cancelamentos conhecidos — sempre no topo
+  if(typeof CANCELAMENTOS!=='undefined'&&CANCELAMENTOS.length){
+    const listaCancels=CANCELAMENTOS.map(c=>
+      c.cliente.split(' ').slice(0,3).join(' ')+': −R$'+Math.round(c.valor).toLocaleString('pt-BR')+' ('+c.periodo+')'
+    ).join(' · ');
+    alerts.push({t:'amber',e:'⚠️',
+      h:CANCELAMENTOS.length+' nota(s) cancelada(s) — já deduzida(s) de todos os números',
+      b:listaCancels,
+      c:'<b>Já corrigido:</b> Totais, YoY, rankings e projecões já excluem essa(s) nota(s). '+
+        CANCELAMENTOS.map(c=>c.periodo+': '+c.motivo).join('. ')
+    });
+  }
+
+  const r=yoy;
+  alerts.push({t:r>=0?'green':'red',e:r>=0?'📈':'📉',
+    h:`YoY Jan–Mai: ${fPct(r)} — 2026 ${r>=0?'acima':'abaixo'} de 2025 no mesmo período`,
+    b:`2026: ${fR(d.total_val)} vs 2025: ${fR(D25.janMai.receita)} (diff: ${r>=0?'+':''}${fR(d.total_val-D25.janMai.receita)})`,
+    c:`<b>Principais fatores:</b> preço médio ${d.preco_medio>D25.janMai.preco?'subiu':'caiu'} (${D25.janMai.preco} → R$${d.preco_medio.toFixed(2)}/kg) · clientes ${d.n_cli>D25.janMai.clientes?'aumentaram':'diminuíram'} (${D25.janMai.clientes} → ${d.n_cli}) · volume ${d.total_kg>D25.janMai.kg?'maior':'menor'}`});
+
+  const top2v=topCli.slice(0,2).reduce((s,[,v])=>s+v,0);
+  const top2p=Math.round(top2v/d.total_val*100);
+  if(top2p>15)alerts.push({t:'red',e:'🚨',
+    h:`Concentração: top 2 clientes = ${top2p}% da receita 2026`,
+    b:`${topCli[0][0].split(' ').slice(0,2).join(' ')} (${fR(topCli[0][1])}) e ${topCli[1][0].split(' ').slice(0,2).join(' ')} (${fR(topCli[1][1])})`,
+    c:`<b>Ação:</b> Diversificar carteira. Perder um desses clientes impacta imediatamente o mês.`});
+
+  const mag26=d.clients['MAG RESTAURANTE LTDA']||0;
+  const mag25=D25.topCliJanMai['MAG RESTAURANTE LTDA']||53626;
+  const magP=(mag26-mag25)/mag25*100;
+  alerts.push({t:magP>=-10?'amber':'red',e:'⚠️',
+    h:`MAG Restaurante: ${fPct(magP)} vs 2025 (${fR(mag26)} vs ${fR(mag25)})`,
+    b:`Era o maior cliente histórico. Em 2025 caiu −70% no decorrer do ano. Em 2026: ${magP>=0?'sinais de recuperação':'ainda abaixo'.concat(magP<-30?', preocupante':'')} .`,
+    c:`<b>Ação:</b> Reunião presencial de relacionamento para entender o motivo e apresentar proposta de mix.`});
+
+  const broto26=Object.entries(d.products).filter(([n])=>n.toUpperCase().includes('BROTO')).reduce((s,[,p])=>s+p.val,0);
+  const broto25=D25.topProdJanMai['BANDEJA BROTO 100G']+D25.topProdJanMai['BANDEJA BROTO 50G'];
+  const brotoP=(broto26-broto25)/broto25*100;
+  alerts.push({t:'blue',e:'🌱',
+    h:`Broto 2026: ${fR(broto26)} (${fPct(brotoP)} vs 2025)`,
+    b:`Produto de maior valor real da operação: ~R$350-420/kg equivalente. Representa ${Math.round(broto26/d.total_val*100)}% da receita.`,
+    c:`<b>Oportunidade:</b> Cada novo cliente de broto tem ticket 3–4× maior que alface. Prospecção em restaurantes premium, cafeterias e empórios.`});
+
+  const precoP=(d.preco_medio-D25.janMai.preco)/D25.janMai.preco*100;
+  alerts.push({t:precoP>=0?'green':'amber',e:'💰',
+    h:`Preço médio 2026: R$${d.preco_medio.toFixed(2)}/kg (${fPct(precoP)} vs 2025)`,
+    b:`2025 Jan–Mai: R$${D25.janMai.preco}/kg → 2026: R$${d.preco_medio.toFixed(2)}/kg`,
+    c:`${precoP>=0?'<b>Verificar:</b> Confirme que todos os clientes foram reprecificados. Clientes com tabela antiga estão reduzindo sua margem.':'<b>Alerta:</b> Preço médio abaixo de 2025. Identifique clientes com preço desatualizado e renegocie.'}`});
+
+  const novos=topCli.filter(([n])=>!D25.topCliJanMai[n]).slice(0,5);
+  if(novos.length)alerts.push({t:'green',e:'✨',
+    h:`${novos.length} clientes novos em 2026 que não existiam em 2025`,
+    b:novos.map(([n,v])=>`${n.split(' ').slice(0,2).join(' ')} (${fR(v)})`).join(' · '),
+    c:`<b>Ação:</b> Garantir excelente experiência no primeiro trimestre para converter em recorrentes de longo prazo.`});
+
+  document.getElementById('radar-list').innerHTML=alerts.map(a=>`<div class="alert ${a.t}"><div class="aic">${a.e}</div><div class="abd"><h4>${a.h}</h4><p>${a.b}</p><div class="cbox">${a.c}</div></div></div>`).join('');
+
+
+  // ══════════════════════════════════════════════════════
+  // VISÃO COMERCIAL — renderiza com dados de MAIO
+  // ══════════════════════════════════════════════════════
+  renderComercial(loadMaio());
+
+  // MONO
+  const mono=Object.entries(d.mono||{}).sort((a,b)=>b[1].val-a[1].val);
+  document.querySelector('#t-mono tbody').innerHTML=mono.length
+    ?mono.map(([n,m],i)=>`<tr><td style="color:var(--t3);font-size:10px">${i+1}</td><td>${n.split(' ').slice(0,4).join(' ')}</td><td><span class="pill p-b">${m.prod}</span></td><td class="tdr"><b>${fR(m.val)}</b></td></tr>`).join('')
+    :'<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:16px">Nenhum cliente mono-produto encontrado</td></tr>';
+}
+
+// ══════════════════════════════════════════════════════
+// MAIO — storage, upload diário e render
+// ══════════════════════════════════════════════════════
+const SK_MAIO='bg-maio-v2';
+const SK_DAILY='bg-daily-v2';
+
+function loadMaio(){try{const s=localStorage.getItem(SK_MAIO);return s?JSON.parse(s):BASE_MAIO_26;}catch{return BASE_MAIO_26;}}
+function saveMaio(d){try{localStorage.setItem(SK_MAIO,JSON.stringify(d));}catch{}}
+
+function loadDaily(){try{const s=localStorage.getItem(SK_DAILY);return s?JSON.parse(s):BASE_DAILY_26;}catch{return BASE_DAILY_26;}}
+function saveDaily(d){try{localStorage.setItem(SK_DAILY,JSON.stringify(d));}catch{}}
+
+function clearMaio(){
+  if(!confirm('Limpar dados de maio e diários?'))return;
+  localStorage.removeItem(SK_MAIO);localStorage.removeItem(SK_DAILY);
+  renderComercial(BASE_MAIO_26,BASE_DAILY_26);
+  const chip=document.getElementById('maio-chip');
+  if(chip){chip.textContent='Base: 01–18/Mai · R$42.721';chip.className='bdg bdg-b';chip.style.cssText='font-size:11px';}
+}
+
+function onDropMaio(e){e.preventDefault();document.getElementById('drop-maio').style.background='#fff';onFileMaio(e.dataTransfer.files[0]);}
+
+async function onFileMaio(file){
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!['xls','xlsx','csv'].includes(ext)){document.getElementById('maio-stmsg').textContent='Selecione um .xls, .xlsx ou .csv';return;}
+  document.getElementById('maio-stmsg').textContent='Lendo arquivo...';
+  document.getElementById('maio-prog-w').style.display='block';
+  document.getElementById('maio-prog-f').style.width='40%';
+  let rows=[];
+  try{
+    if(ext==='csv'){
+      const txt=await file.text();
+      rows=parseCsvText(txt);
+    } else {
+      rows=parseXlsx(await file.arrayBuffer());
+    }
+  }catch(e){document.getElementById('maio-stmsg').textContent='Erro: '+e.message;return;}
+  if(!rows||!rows.length){document.getElementById('maio-stmsg').textContent='Nenhum dado encontrado.';return;}
+  document.getElementById('maio-prog-f').style.width='80%';
+
+  // Determine if this is a DAILY file (small, <100 rows) or MONTH accumulation
+  const isDaily = rows.length < 120;
+  const totV=rows.reduce((s,r)=>s+r.valor,0);
+  const totKg=rows.reduce((s,r)=>s+r.kg,0);
+  const nCli=new Set(rows.map(r=>r.client)).size;
+  const prods={};const monoC={};const clis={};
+  for(const r of rows){
+    if(!prods[r.product])prods[r.product]={val:0,kg:0,prices:[]};
+    prods[r.product].val+=r.valor;prods[r.product].kg+=r.kg;if(r.preco>0)prods[r.product].prices.push(r.preco);
+    clis[r.client]=(clis[r.client]||0)+r.valor;
+    if(!monoC[r.client])monoC[r.client]={val:0,prods:new Set()};
+    monoC[r.client].val+=r.valor;monoC[r.client].prods.add(r.product);
+  }
+  for(const[n,p]of Object.entries(prods))p.avg_preco=p.prices.length?p.prices.reduce((a,b)=>a+b,0)/p.prices.length:0;
+  const monoOut=Object.fromEntries(Object.entries(monoC).filter(([,d])=>d.prods.size===1&&d.val>300).map(([n,d])=>[n,{val:Math.round(d.val*100)/100,prod:[...d.prods][0]}]));
+
+  const hoje=new Date();
+  const dateStr=hoje.toLocaleDateString('pt-BR');
+  const snap={file:file.name,date:dateStr,dia_mes:hoje.getDate(),
+    total_val:Math.round(totV*100)/100,total_kg:Math.round(totKg*10)/10,
+    n_cli:nCli,preco_medio:totKg>0?Math.round(totV/totKg*100)/100:0,
+    products:Object.fromEntries(Object.entries(prods).map(([n,p])=>[n,{val:Math.round(p.val*100)/100,kg:Math.round(p.kg*3)/3,avg_preco:Math.round(p.avg_preco*100)/100}])),
+    clients:Object.fromEntries(Object.entries(clis).map(([n,v])=>[n,Math.round(v*100)/100])),
+    mono:monoOut
+  };
+
+  if(isDaily){
+    // Add/replace this day in daily history
+    const daily=loadDaily();
+    const existing=daily.findIndex(d=>d.date===dateStr);
+    const dayEntry={date:dateStr,label:dateStr.substring(0,5),total_val:snap.total_val,total_kg:snap.total_kg,n_cli:snap.n_cli,products:snap.products,clients:snap.clients};
+    if(existing>=0)daily[existing]=dayEntry;else daily.push(dayEntry);
+    daily.sort((a,b)=>a.date.localeCompare(b.date));
+    saveDaily(daily);
+    document.getElementById('maio-stmsg').textContent=`✓ Dia ${dateStr} atualizado: ${fR(snap.total_val)} · ${nCli} clientes`;
+    renderComercial(loadMaio(),daily);
+  } else {
+    // Month accumulation — update maio base
+    saveMaio(snap);
+    document.getElementById('maio-stmsg').textContent=`✓ Base maio atualizada: ${fR(snap.total_val)} · ${nCli} clientes`;
+    renderComercial(snap,loadDaily());
+  }
+
+  document.getElementById('maio-prog-f').style.width='100%';
+  setTimeout(()=>document.getElementById('maio-prog-w').style.display='none',600);
+  const chip=document.getElementById('maio-chip');
+  chip.textContent=`${isDaily?'Dia':'Mês'}: ${dateStr} · ${fR(totV)} · ${nCli} clientes`;
+  chip.className='bdg bdg-b';chip.style.cssText='font-size:11px';
+}
+
+// CSV parser for .csv files
+function parseCsvText(txt){
+  const rows=[];let cli=null;
+  for(const line of txt.split('\n')){
+    const parts=line.split(';');
+    if(parts.length<7)continue;
+    const f0=parts[0].trim().replace(/^"|"$/g,'');
+    const f1=parts[1].trim().replace(/^"|"$/g,'');
+    if(['Cliente','Totais','Total'].includes(f0))continue;
+    const col1empty=(f1==='');
+    if(f0&&f0!=='\xa0'&&f0!=='\u00a0'&&f0.length>4&&col1empty){
+      cli=f0.replace(/\s*-\s*[\d.]{11,18}.*$/,'').trim();continue;
+    }
+    // product line: f0 is nbsp (\xa0 as char code 160)
+    const f0code=f0.charCodeAt(0);
+    if((f0===''||f0.trim()===''||f0code===160||f0==='\xa0')&&f1&&f1!=='Produto'&&cli){
+      const parseBRl=s=>{s=s.trim().replace(/^"|"$/g,'');if(!s||s==='-')return 0;return parseFloat(s.replace(/\./g,'').replace(',','.'))||0;};
+      const q=parseBRl(parts[3]),pr=parseBRl(parts[5]),va=parseBRl(parts[6]);
+      const f2=kgF(f1);
+      if(f2===null||(!q&&!va))continue;
+      rows.push({client:cli,product:f1,qtde:q,kg:q*f2,preco:pr,valor:va});
+    }
+  }
+  return rows;
+}
+
+function renderComercial(maioSnap, dailyArr){
+  const snap=maioSnap||BASE_MAIO_26;
+  const daily=dailyArr||loadDaily();
+  const hoje=new Date();
+  const diaDoMes=hoje.getDate();
+  const diasNoMes=new Date(hoje.getFullYear(),hoje.getMonth()+1,0).getDate();
+  const diasRestantes=diasNoMes-diaDoMes;
+  const mesNome=hoje.toLocaleString('pt-BR',{month:'long'});
+  const mesNomeUC=mesNome.charAt(0).toUpperCase()+mesNome.slice(1);
+
+  // ── KPIs MAIO
+  const diasMaio=snap.dia_mes||diaDoMes;
+  const taxaDia=snap.total_val/diasMaio;
+  const projMes=Math.round(taxaDia*diasNoMes);
+  const faltaMes=projMes-snap.total_val;
+
+  const sub=document.getElementById('com-atualizado');
+  if(sub)sub.textContent=`${snap.label||snap.date||'Mai/26'} · ${diasMaio} dias · R$${Math.round(taxaDia).toLocaleString('pt-BR')}/dia médio`;
+
+  const ml=document.getElementById('com-mes-label');
+  if(ml)ml.textContent=`${mesNomeUC} 2026 · dia ${diaDoMes}/${diasNoMes}`;
+
+  const kpiEl=document.getElementById('com-kpis');
+  if(kpiEl)kpiEl.innerHTML=`
+    <div class="kpi"><div class="kpi-l">Faturado maio</div><div class="kpi-v">${fR(snap.total_val)}</div><span class="kpi-d kd-n">${diasMaio} dias</span></div>
+    <div class="kpi"><div class="kpi-l">Média/dia maio</div><div class="kpi-v">${fR(taxaDia)}</div><span class="kpi-d kd-n">pace do mês</span></div>
+    <div class="kpi"><div class="kpi-l">Projeção maio</div><div class="kpi-v">${fR(projMes)}</div><span class="kpi-d ${projMes>92843?'kd-up':'kd-dn'}">${projMes>92843?'↑':'↓'} vs mai/25 R$93k</span></div>
+    <div class="kpi"><div class="kpi-l">Falta (${diasRestantes}d)</div><div class="kpi-v">${fR(faltaMes)}</div><span class="kpi-d kd-n">projeção</span></div>`;
+
+  // ── RITMO
+  const dEl=document.getElementById('com-diario');
+  if(dEl)dEl.innerHTML=`
+    <div class="kpi"><div class="kpi-l">Clientes ativos</div><div class="kpi-v">${snap.n_cli}</div><span class="kpi-d kd-n">${fR(snap.total_val/snap.n_cli)} ticket</span></div>
+    <div class="kpi"><div class="kpi-l">Preço médio/kg</div><div class="kpi-v">R$${snap.preco_medio.toFixed(2)}</div><span class="kpi-d kd-n">maio</span></div>`;
+
+  // ── PROJEÇÃO
+  const pEl=document.getElementById('com-proj-mes');
+  if(pEl)pEl.innerHTML=`
+    <div class="kpi"><div class="kpi-l">Hoje (último dia)</div><div class="kpi-v">${daily.length?fR(daily[daily.length-1].total_val):'—'}</div><span class="kpi-d kd-n">${daily.length?daily[daily.length-1].date:'sem dado'}</span></div>
+    <div class="kpi"><div class="kpi-l">Dias com dados</div><div class="kpi-v">${daily.length}</div><span class="kpi-d kd-n">dias registrados</span></div>`;
+
+  // ── GRÁFICO DIÁRIO — média nos dias sem dado, real nos dias com dado, projeção no futuro
+  const dayMap={};
+  for(const d of daily)dayMap[parseInt(d.date.split('/')[0])]=d.total_val;
+  const daysLabels=[],daysMedia=[],daysReal=[],daysProj=[],daysMedLine=[];
+  const mediaVal = Math.round(taxaDia);
+  for(let i=1;i<=diasNoMes;i++){
+    daysLabels.push(i+'');
+    daysMedLine.push(mediaVal); // linha de referência em todos os dias
+    if(dayMap[i]!==undefined){
+      // Dia com dado real importado
+      daysReal.push(dayMap[i]);
+      daysMedia.push(null);
+      daysProj.push(null);
+    } else if(i<=diasMaio){
+      // Dia já passado sem dado diário — usa a média
+      daysMedia.push(mediaVal);
+      daysReal.push(null);
+      daysProj.push(null);
+    } else {
+      // Dia futuro — projeção (mesma média)
+      daysProj.push(mediaVal);
+      daysMedia.push(null);
+      daysReal.push(null);
+    }
+  }
+
+  setTimeout(()=>{
+    mkChart('c-com-mes','bar',{
+      labels:daysLabels,
+      datasets:[
+        // Barras com média estimada (dias 01–N sem dado real)
+        {
+          label:'Média estimada',
+          data:daysMedia,
+          backgroundColor:'rgba(41,128,185,.28)',
+          borderColor:'rgba(41,128,185,.5)',
+          borderWidth:1,
+          borderRadius:3,
+          order:3,
+          type:'bar',
+        },
+        // Barras com valor real importado
+        {
+          label:'Faturado real',
+          data:daysReal,
+          backgroundColor:'rgba(41,128,185,.92)',
+          borderColor:'#1a6b9a',
+          borderWidth:1,
+          borderRadius:3,
+          order:2,
+          type:'bar',
+        },
+        // Barras projeção — dias futuros
+        {
+          label:'Projeção',
+          data:daysProj,
+          backgroundColor:'rgba(180,180,180,.2)',
+          borderColor:'rgba(180,180,180,.4)',
+          borderWidth:1,
+          borderRadius:3,
+          order:4,
+          type:'bar',
+        },
+        // Linha de média — referência horizontal
+        {
+          label:'Média/dia',
+          data:daysMedLine,
+          type:'line',
+          borderColor:'#e74c3c',
+          borderWidth:1.5,
+          borderDash:[5,3],
+          pointRadius:0,
+          fill:false,
+          tension:0,
+          order:1,
+        },
+      ]
+    },{
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          align:'end',
+          labels:{font:{size:10,family:'Inter'},boxWidth:10,padding:12,
+            filter:item=>{
+                if(item.text==='Média estimada')return daysMedia.some(v=>v!==null);
+                if(item.text==='Faturado real')return daysReal.some(v=>v!==null);
+                if(item.text==='Projeção')return daysProj.some(v=>v!==null);
+                return true;
+              }
+          }
+        },
+        tooltip:{
+          callbacks:{
+            title:ctx=>'Dia '+ctx[0].label+'/Mai/26',
+            label:ctx=>{
+              if(ctx.dataset.label==='Faturado real')return' Faturado real: '+fR(ctx.raw);
+              if(ctx.dataset.label==='Média estimada')return' Média estimada: '+fR(ctx.raw);
+              if(ctx.dataset.label==='Projeção')return' Projeção: '+fR(ctx.raw);
+              if(ctx.dataset.label==='Média/dia')return' Média/dia: '+fR(ctx.raw);
+              return ctx.dataset.label+': '+fR(ctx.raw);
+            }
+          }
+        }
+      },
+      scales:{
+        y:{ticks:{font:{size:9},callback:v=>fR(v)},grid:{color:gc}},
+        x:{ticks:{font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:16},grid:{display:false}}
+      }
+    });
+  },80);
+
+  // ── MICROGREENS & BASILICO (dados de maio)
+  const UF_LOCAL={'BANDEJA BROTO':0.05,'BROTO':0.05,'BUQUE':0.10,'MANJERICAO BASILICO':0.06};
+  const microKeys=Object.keys(snap.products).filter(n=>{const u=n.toUpperCase();return u.includes('BROTO')||u.includes('BASILICO')||u.includes('BUQUE')||u.includes('MICROGREEN');});
+  let totMV=0,totMK=0,totMU=0;
+  const microRows=microKeys.map(n=>{
+    const p=snap.products[n];const u=n.toUpperCase();
+    let factor=1;for(const[k,v]of Object.entries(UF_LOCAL))if(u.includes(k)){factor=v;break;}
+    const unidades=Math.round(p.kg/factor);
+    const realKg=factor<1?p.avg_preco/factor:p.avg_preco;
+    totMV+=p.val;totMK+=p.kg;totMU+=unidades;
+    return{n,p,unidades,realKg};
+  }).sort((a,b)=>b.p.val-a.p.val);
+
+  // Also add today's micro data separately
+  const todayMicro = daily.length ? daily[daily.length-1].products||{} : {};
+  const todayMicroKeys = Object.keys(todayMicro).filter(n=>{const u=n.toUpperCase();return u.includes('BROTO')||u.includes('BASILICO')||u.includes('BUQUE');});
+  let todayMicroVal=todayMicroKeys.reduce((s,n)=>s+(todayMicro[n]?.val||0),0);
+
+  const mkEl=document.getElementById('com-micro-kpis');
+  if(mkEl)mkEl.innerHTML=`
+    <div class="kpi"><div class="kpi-l">Receita micro + basilico (mês)</div><div class="kpi-v">${fR(totMV)}</div><span class="kpi-d kd-n">${(totMV/snap.total_val*100).toFixed(1)}% do mês</span></div>
+    <div class="kpi"><div class="kpi-l">Unidades no mês</div><div class="kpi-v">${fN(totMU)}</div><span class="kpi-d kd-n">${fN(Math.round(totMU/diasMaio))}/dia</span></div>
+    <div class="kpi"><div class="kpi-l">Hoje (microgreens)</div><div class="kpi-v">${todayMicroVal>0?fR(todayMicroVal):'—'}</div><span class="kpi-d kd-n">${daily.length?daily[daily.length-1].date:'sem dado diário'}</span></div>`;
+
+  const tb=document.getElementById('t-micro-body');
+  if(tb)tb.innerHTML=microRows.length
+    ?microRows.map(({n,p,unidades,realKg})=>{
+        // Find today's data for this product
+        const todayP=todayMicro[n];
+        const todayUn=todayP?Math.round(todayP.kg/(UF_LOCAL[Object.keys(UF_LOCAL).find(k=>n.toUpperCase().includes(k))]||1)):0;
+        return`<tr>
+          <td><b>${n}</b></td>
+          <td class="tdr"><b>${fN(unidades)}</b> <span style="color:var(--t3);font-size:10px">${todayUn>0?'(+'+todayUn+' hoje)':''}</span></td>
+          <td class="tdr">${fN(p.kg)}</td>
+          <td class="tdr">${fR(p.val)} <span style="color:var(--t3);font-size:10px">${todayP?'(+'+fR(todayP.val)+' hoje)':''}</span></td>
+          <td class="tdr">R$${p.avg_preco.toFixed(2)}</td>
+          <td class="tdr" style="font-weight:700;color:${realKg>100?'var(--r)':realKg>40?'var(--a)':'var(--t2)'}">R$${Math.round(realKg)}/kg</td>
+        </tr>`;
+      }).join('')
+    :'<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:16px">Nenhum microgreen ou basilico no período</td></tr>';
+}
+
+
+// ══════════════════════════════════════════════════════
+// EXPORTAR — gera .xlsx para compartilhar
+// ══════════════════════════════════════════════════════
+function xlsxDownload(wb, filename){
+  XLSX.writeFile(wb, filename);
+}
+
+function styleHeader(ws, headers){
+  // Set column widths
+  ws['!cols'] = headers.map(h=>({wch: Math.max(h.length+4, 14)}));
+  return ws;
+}
+
+function arrToSheet(headers, rows){
+  const data = [headers, ...rows];
+  return XLSX.utils.aoa_to_sheet(data);
+}
+
+function getActiveData(){
+  const snap = load()||BASE_26;
+  const d = snap||BASE_26;
+  const dias = snap?snap.dias||135:135;
+  return {d, dias};
+}
+
+function exportResumo(){
+  const {d, dias} = getActiveData();
+  const yoy = (d.total_val - D25.janMai.receita)/D25.janMai.receita*100;
+  const taxaDia = d.total_val/dias;
+
+  // Aba 1: KPIs
+  const kpiRows = [
+    ['Receita acumulada 2026', d.total_val, 'R$'],
+    ['Receita Jan–Mai 2025 (comparativo)', D25.janMai.receita, 'R$'],
+    ['Variação YoY (%)', +yoy.toFixed(1), '%'],
+    ['Volume 2026 (kg)', d.total_kg, 'kg'],
+    ['Clientes ativos 2026', d.n_cli, 'un'],
+    ['Preço médio/kg 2026', d.preco_medio, 'R$/kg'],
+    ['Preço médio/kg 2025 Jan–Mai', D25.janMai.preco, 'R$/kg'],
+    ['Taxa diária atual', +taxaDia.toFixed(0), 'R$/dia'],
+    ['Projeção anual 2026 (pace atual)', +Math.round(taxaDia*365), 'R$'],
+    ['Receita total 2025', D25.total, 'R$'],
+  ];
+
+  // Aba 2: Faturamento mensal
+  const mesRows = D25.receita.map((v,i)=>{
+    const r25 = D25.receita[i];
+    const r26 = i<5?Math.round(d.total_val*r25/D25.janMai.receita):null;
+    return [
+      ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][i],
+      r25,
+      r26||'',
+      r26?(+(( r26-r25)/r25*100).toFixed(1)+'%'):''
+    ];
+  });
+
+  const wb = XLSX.utils.book_new();
+  const wsKpi = arrToSheet(['Métrica','Valor','Unidade'], kpiRows);
+  styleHeader(wsKpi, ['Métrica','Valor','Unidade']);
+  XLSX.utils.book_append_sheet(wb, wsKpi, 'KPIs');
+
+  const wsMes = arrToSheet(['Mês','2025','2026 (est.)','YoY'], mesRows);
+  styleHeader(wsMes, ['Mês','2025','2026 (est.)','YoY']);
+  XLSX.utils.book_append_sheet(wb, wsMes, 'Mensal');
+
+  document.getElementById('export-preview').innerHTML =
+    `<b>Resumo executivo</b> — ${kpiRows.length} KPIs + tabela de 12 meses (2025 vs 2026 estimado). Pronto para download.`;
+  xlsxDownload(wb, 'begreen_resumo_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+}
+
+function exportClientes(){
+  const {d} = getActiveData();
+  const topCli = Object.entries(d.clients||{}).sort((a,b)=>b[1]-a[1]);
+  const prodsMap = d.prodsPerCli||{};
+  const cancelSet = new Set(CANCELAMENTOS.map(c=>c.cliente));
+
+  // Header — igual à tabela do dashboard
+  const headers = ['#','Cliente','Receita 2026 (R$)','Jan–Mai 2025 (R$)','YoY (%)','Nº Produtos','Status','Obs.'];
+
+  const rows = topCli.map(([n,v],i)=>{
+    const r25 = D25.topCliJanMai[n]||0;
+    const yoy = r25>0?+((v-r25)/r25*100).toFixed(1):null;
+    const nProds = prodsMap[n]||'';
+    const status = yoy===null?'Novo':yoy>=10?'Crescendo':yoy<=-10?'Caindo':'Estável';
+    const obs = cancelSet.has(n)?'Nota cancelada deduzida':'';
+    return [
+      i+1,
+      n,
+      v,
+      r25||0,
+      yoy!==null?yoy/100:null,   // as decimal so Excel formats as %
+      nProds,
+      status,
+      obs
+    ];
+  });
+
+  const wb = XLSX.utils.book_new();
+  const data = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+
+  // Column widths
+  ws['!cols'] = [
+    {wch:4},   // #
+    {wch:45},  // Cliente
+    {wch:18},  // Receita 2026
+    {wch:18},  // 2025
+    {wch:10},  // YoY
+    {wch:12},  // Nº Produtos
+    {wch:14},  // Status
+    {wch:30},  // Obs
+  ];
+
+  // Format numeric columns
+  const nRows = rows.length;
+  for(let r=1;r<=nRows;r++){
+    // Receita 2026 — col C (index 2)
+    const cC = XLSX.utils.encode_cell({r,c:2});
+    if(ws[cC]) ws[cC].z = 'R$ #,##0.00';
+    // Jan-Mai 2025 — col D (index 3)
+    const cD = XLSX.utils.encode_cell({r,c:3});
+    if(ws[cD]) ws[cD].z = 'R$ #,##0.00';
+    // YoY — col E (index 4)
+    const cE = XLSX.utils.encode_cell({r,c:4});
+    if(ws[cE]&&ws[cE].v!==null) ws[cE].z = '0.0%';
+  }
+
+  // Header style row bold
+  for(let c=0;c<headers.length;c++){
+    const cell = XLSX.utils.encode_cell({r:0,c});
+    if(ws[cell]) ws[cell].s = {font:{bold:true},fill:{fgColor:{rgb:'1A6B3C'}},color:{rgb:'FFFFFF'}};
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Clientes 2026');
+
+  // Add a second tab: Cancelamentos conhecidos
+  if(CANCELAMENTOS.length){
+    const cData = [
+      ['Cliente','Período','Valor deduzido (R$)','Motivo'],
+      ...CANCELAMENTOS.map(c=>[c.cliente, c.periodo, c.valor, c.motivo])
+    ];
+    const wsCan = XLSX.utils.aoa_to_sheet(cData);
+    wsCan['!cols']=[{wch:45},{wch:10},{wch:22},{wch:50}];
+    XLSX.utils.book_append_sheet(wb, wsCan, 'Cancelamentos');
+  }
+
+  const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  document.getElementById('export-preview').innerHTML =
+    `<b>Clientes 2026</b> — ${rows.length} clientes · ${CANCELAMENTOS.length} cancelamento(s) em aba separada. Pronto para download.`;
+  xlsxDownload(wb, 'begreen_clientes_'+hoje+'.xlsx');
+}
+
+function exportProdutos(){
+  const {d} = getActiveData();
+  const UF_EXP={'BANDEJA BROTO':0.05,'BROTO':0.05,'BUQUE':0.10,'MANJERICAO BASILICO':0.06,'COENTRO':0.05,'SALSA':0.05};
+  const topProd = Object.entries(d.products||{}).sort((a,b)=>b[1].val-a[1].val);
+  const rows = topProd.map(([n,p],i)=>{
+    let factor=1;
+    for(const[k,v]of Object.entries(UF_EXP))if(n.toUpperCase().includes(k)){factor=v;break;}
+    const realKg = factor<1?p.avg_preco/factor:p.avg_preco;
+    const r25 = D25.topProdJanMai[n]||0;
+    const yoy = r25>0?+((p.val-r25)/r25*100).toFixed(1):null;
+    const share = +(p.val/d.total_val*100).toFixed(1);
+    return [i+1, n, p.val, share+'%', +p.kg.toFixed(1), p.avg_preco, +realKg.toFixed(0), r25||'', yoy!==null?(yoy+'%'):'Novo'];
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = arrToSheet(['#','Produto','Receita (R$)','% Total','Volume (kg)','Preço médio (R$)','R$/kg real','Jan–Mai 2025','YoY'], rows);
+  styleHeader(ws, ['#','Produto','Receita (R$)','% Total','Volume (kg)','Preço médio (R$)','R$/kg real','Jan–Mai 2025','YoY']);
+  XLSX.utils.book_append_sheet(wb, ws, 'Produtos 2026');
+
+  document.getElementById('export-preview').innerHTML =
+    `<b>Produtos 2026</b> — ${rows.length} produtos com receita, volume, ticket real e YoY.`;
+  xlsxDownload(wb, 'begreen_produtos_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+}
+
+function exportMicro(){
+  const maioSnap = loadMaio()||BASE_MAIO_26;
+  const UF_EXP={'BANDEJA BROTO':0.05,'BROTO':0.05,'BUQUE':0.10,'MANJERICAO BASILICO':0.06};
+  const microKeys = Object.keys(maioSnap.products||{}).filter(n=>{
+    const u=n.toUpperCase();
+    return u.includes('BROTO')||u.includes('BASILICO')||u.includes('BUQUE')||u.includes('MICROGREEN');
+  });
+  let totV=0,totK=0,totU=0;
+  const rows = microKeys.sort((a,b)=>(maioSnap.products[b]?.val||0)-(maioSnap.products[a]?.val||0)).map((n,i)=>{
+    const p=maioSnap.products[n];
+    let factor=1;for(const[k,v]of Object.entries(UF_EXP))if(n.toUpperCase().includes(k)){factor=v;break;}
+    const un=Math.round(p.kg/factor);
+    const realKg=factor<1?+(p.avg_preco/factor).toFixed(0):+p.avg_preco.toFixed(0);
+    totV+=p.val;totK+=p.kg;totU+=un;
+    return[i+1,n,un,+p.kg.toFixed(2),+p.val.toFixed(2),+p.avg_preco.toFixed(2),realKg];
+  });
+  rows.push(['','TOTAL',totU,+totK.toFixed(2),+totV.toFixed(2),'','']);
+
+  const wb = XLSX.utils.book_new();
+  const ws = arrToSheet(['#','Produto','Unidades vendidas','Kg equivalente','Receita (R$)','Preço médio/un (R$)','R$/kg real'], rows);
+  styleHeader(ws, ['#','Produto','Unidades vendidas','Kg equivalente','Receita (R$)','Preço médio/un (R$)','R$/kg real']);
+  XLSX.utils.book_append_sheet(wb, ws, 'Microgreens Mai-26');
+
+  document.getElementById('export-preview').innerHTML =
+    `<b>Microgreens & Basilico</b> — ${rows.length-1} produtos · Total: R$${Math.round(totV).toLocaleString('pt-BR')} · ${totU} unidades.`;
+  xlsxDownload(wb, 'begreen_microgreens_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+}
+
+function exportDiario(){
+  const daily = loadDaily()||BASE_DAILY_26;
+  const rows = daily.map((d,i)=>[i+1, d.date, d.total_val, +d.total_kg.toFixed(1), d.n_cli, d.total_val?+(d.total_val/d.n_cli).toFixed(2):0]);
+  if(!rows.length){alert('Nenhum dado diário importado ainda.');return;}
+
+  const wb = XLSX.utils.book_new();
+  const ws = arrToSheet(['#','Data','Faturamento (R$)','Volume (kg)','Clientes','Ticket médio (R$)'], rows);
+  styleHeader(ws, ['#','Data','Faturamento (R$)','Volume (kg)','Clientes','Ticket médio (R$)']);
+  XLSX.utils.book_append_sheet(wb, ws, 'Diário Mai-26');
+
+  document.getElementById('export-preview').innerHTML =
+    `<b>Histórico diário</b> — ${rows.length} dia(s) registrado(s) em maio 2026.`;
+  xlsxDownload(wb, 'begreen_diario_maio_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+}
+
+function exportTudo(){
+  const {d} = getActiveData();
+  const maioSnap = loadMaio()||BASE_MAIO_26;
+  const daily = loadDaily()||BASE_DAILY_26;
+  const UF_EXP={'BANDEJA BROTO':0.05,'BROTO':0.05,'BUQUE':0.10,'MANJERICAO BASILICO':0.06,'COENTRO':0.05,'SALSA':0.05};
+  const wb = XLSX.utils.book_new();
+
+  // Aba 1 — KPIs
+  const dias = d.dias||135;
+  const yoy=(d.total_val-D25.janMai.receita)/D25.janMai.receita*100;
+  const taxaDia=d.total_val/dias;
+  const kpiRows=[
+    ['Receita acumulada 2026',d.total_val,'R$'],
+    ['Receita Jan–Mai 2025',D25.janMai.receita,'R$'],
+    ['Variação YoY',+yoy.toFixed(1),'%'],
+    ['Volume 2026',d.total_kg,'kg'],
+    ['Clientes ativos',d.n_cli,'un'],
+    ['Preço médio/kg',d.preco_medio,'R$/kg'],
+    ['Projeção anual 2026',+Math.round(taxaDia*365),'R$'],
+    ['Receita total 2025',D25.total,'R$'],
+  ];
+  XLSX.utils.book_append_sheet(wb, arrToSheet(['Métrica','Valor','Unidade'],kpiRows), 'KPIs');
+
+  // Aba 2 — Clientes
+  const cliRows=Object.entries(d.clients||{}).sort((a,b)=>b[1]-a[1]).map(([n,v],i)=>{
+    const r25=D25.topCliJanMai[n]||0;const yoyC=r25>0?+((v-r25)/r25*100).toFixed(1):null;
+    return[i+1,n,v,r25||'',yoyC!==null?(yoyC+'%'):'Novo',yoyC===null?'Novo':yoyC>=10?'Crescendo':yoyC<=-10?'Caindo':'Estável'];
+  });
+  XLSX.utils.book_append_sheet(wb,arrToSheet(['#','Cliente','Receita 2026','Jan–Mai 2025','YoY','Status'],cliRows),'Clientes');
+
+  // Aba 3 — Produtos
+  const prodRows=Object.entries(d.products||{}).sort((a,b)=>b[1].val-a[1].val).map(([n,p],i)=>{
+    let factor=1;for(const[k,v]of Object.entries(UF_EXP))if(n.toUpperCase().includes(k)){factor=v;break;}
+    const realKg=factor<1?+(p.avg_preco/factor).toFixed(0):+p.avg_preco.toFixed(0);
+    const r25=D25.topProdJanMai[n]||0;const yoyP=r25>0?+((p.val-r25)/r25*100).toFixed(1):null;
+    return[i+1,n,p.val,+(p.val/d.total_val*100).toFixed(1)+'%',+p.kg.toFixed(1),p.avg_preco,realKg,r25||'',yoyP!==null?(yoyP+'%'):'Novo'];
+  });
+  XLSX.utils.book_append_sheet(wb,arrToSheet(['#','Produto','Receita','% Total','Kg','Preço/un','R$/kg real','2025','YoY'],prodRows),'Produtos');
+
+  // Aba 4 — Microgreens
+  const microKeys=Object.keys(maioSnap.products||{}).filter(n=>{const u=n.toUpperCase();return u.includes('BROTO')||u.includes('BASILICO')||u.includes('BUQUE');});
+  const microRows2=microKeys.sort((a,b)=>(maioSnap.products[b]?.val||0)-(maioSnap.products[a]?.val||0)).map((n,i)=>{
+    const p=maioSnap.products[n];let factor=1;
+    for(const[k,v]of Object.entries(UF_EXP))if(n.toUpperCase().includes(k)){factor=v;break;}
+    const un=Math.round(p.kg/factor);const realKg=factor<1?+(p.avg_preco/factor).toFixed(0):+p.avg_preco.toFixed(0);
+    return[i+1,n,un,+p.kg.toFixed(2),+p.val.toFixed(2),+p.avg_preco.toFixed(2),realKg];
+  });
+  XLSX.utils.book_append_sheet(wb,arrToSheet(['#','Produto','Unidades','Kg equiv.','Receita','Preço/un','R$/kg real'],microRows2),'Microgreens');
+
+  // Aba 5 — Diário
+  const dailyRows=daily.map((d,i)=>[i+1,d.date,d.total_val,+d.total_kg.toFixed(1),d.n_cli,d.total_val?+(d.total_val/d.n_cli).toFixed(2):0]);
+  if(dailyRows.length)XLSX.utils.book_append_sheet(wb,arrToSheet(['#','Data','Faturamento','Kg','Clientes','Ticket médio'],dailyRows),'Diário');
+
+  document.getElementById('export-preview').innerHTML=`<b>Exportação completa</b> — 5 abas: KPIs, Clientes (${cliRows.length}), Produtos (${prodRows.length}), Microgreens (${microRows2.length}), Diário (${dailyRows.length} dias).`;
+  xlsxDownload(wb,'begreen_completo_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+const PT={
+  upload:['Importar relatório diário','Exporte 01/01/2026 até hoje no Bling e arraste aqui'],
+  comp:['2025 vs 2026 — visão anual','Comparativo completo e lições de 2025'],
+  posicao:['Posição atual 2026','KPIs, projeções e comparativo vs 2025'],
+  comercial:['Visão comercial','Faturamento diário, mensal e microgreens em tempo real'],
+  clientes:['Clientes 2026','Ranking, YoY e detalhamento completo'],
+  produtos:['Produtos 2026','Receita, ticket real e comparativo YoY'],
+  radar:['Alertas & causas','O que você precisa ver agora'],
+  export:['Exportar dados','Gerar planilhas .xlsx para compartilhar com o time'],
+};
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('active');
+  btn.classList.add('on');
+  const[t,s]=PT[id]||['',''];
+  document.getElementById('pg-title').textContent=t;
+  document.getElementById('pg-sub').textContent=s;
+}
+
+// ══════════════════════════════════════════════════════
+// INIT — usa snap salvo se disponível, senão base 15/05
+// ══════════════════════════════════════════════════════
+(()=>{
+  const snap=load();
+  render(snap);
+  updateChips(snap);
+  // Load maio chip state
+  const maioSnap=loadMaio();
+  if(maioSnap){
+    const chip=document.getElementById('maio-chip');
+    if(chip){chip.textContent=`${maioSnap.file} · ${fR(maioSnap.total_val)} · ${maioSnap.date}`;chip.className='bdg bdg-b';chip.style.cssText='font-size:11px';}
+  }
+  renderComercial(loadMaio(), loadDaily());
+})();
+</script>
+</body>
+</html>
